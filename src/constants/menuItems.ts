@@ -140,34 +140,11 @@ export const EXTERNAL_MENU_ITEMS: MenuItem[] = [
 
   // === USERS ===
   {
-    name: "users",
+    name: "my-users",
     title: "Users",
-    href: "/users",
+    href: "/my-users",
     icon: Users,
     roles: ["OWNER", "ADMIN"],
-    submenu: [
-      {
-        name: "users-list",
-        title: "User List",
-        href: "/users/list",
-        icon: Users,
-        roles: ["OWNER", "ADMIN"],
-      },
-      {
-        name: "users-create",
-        title: "Create User",
-        href: "/users/create",
-        icon: PlusCircle,
-        roles: ["OWNER", "ADMIN"],
-      },
-      {
-        name: "users-blocked",
-        title: "Blocked Users",
-        href: "/users/blocked",
-        icon: Trash2,
-        roles: ["OWNER", "ADMIN"],
-      },
-    ],
   },
 
   // === MEJA (TABLES) ===

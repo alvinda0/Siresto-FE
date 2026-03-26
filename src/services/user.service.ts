@@ -8,6 +8,8 @@ import {
   UserQueryParams,
   CreateUserPayload,
   UpdateUserPayload,
+  ExternalUser,
+  ExternalUserResponse,
 } from '@/types/user';
 
 class UserService {
@@ -93,6 +95,35 @@ class UserService {
       };
     }>('/api/v1/users/check-ip');
     return data.data;
+  }
+
+  /**
+   * Get external users
+   */
+  async getExternalUsers(params?: { page?: number; limit?: number }): Promise<ExternalUserResponse> {
+    const { data } = await apiClient.get<ExternalUserResponse>(
+      '/api/v1/external/users',
+      { params }
+    );
+    return data;
+  }
+
+  /**
+   * Create external user
+   */
+  async createExternalUser(payload: {
+    name: string;
+    email: string;
+    password: string;
+    role_id: string;
+    company_id: string;
+    branch_id?: string;
+  }): Promise<{ data: ExternalUser }> {
+    const { data } = await apiClient.post<{ data: ExternalUser }>(
+      '/api/v1/external/users',
+      payload
+    );
+    return data;
   }
 }
 

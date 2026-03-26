@@ -8,6 +8,17 @@ export interface Role {
     is_client: boolean;
 }
 
+export interface ExternalRole {
+    id: string;
+    name: string;
+    display_name: string;
+    type: string;
+    description: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface RoleResponse {
     success: boolean;
     message: string;

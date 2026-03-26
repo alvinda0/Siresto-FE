@@ -1,5 +1,8 @@
 // types/user.ts
 
+import { Role } from './auth';
+import { Company, Branch } from './company';
+
 export interface User {
   user_id: string;
   name: string;
@@ -19,6 +22,20 @@ export interface User {
   agent_name?: string;
   partner_id?: string;
   partner_name?: string;
+}
+
+export interface ExternalUser {
+  id: string;
+  name: string;
+  role_id: string;
+  role: Role;
+  company_id?: string;
+  company?: Company;
+  branch_id?: string;
+  branch?: Branch;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface UserQueryParams {
@@ -75,4 +92,18 @@ export interface UpdateUserPayload {
   email?: string;
   phone?: string;
   ip_whitelist?: string;
+}
+
+export interface ExternalUserResponse {
+  success: boolean;
+  message: string;
+  status: number;
+  timestamp: string;
+  data: ExternalUser[];
+  meta: {
+    page: number;
+    limit: number;
+    total_items: number;
+    total_pages: number;
+  };
 }

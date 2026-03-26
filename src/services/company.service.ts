@@ -25,6 +25,23 @@ class CompanyService {
   }
 
   /**
+   * Get all roles
+   */
+  async getRoles(): Promise<{ data: Array<{
+    id: string;
+    name: string;
+    display_name: string;
+    type: string;
+    description: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+  }> }> {
+    const { data } = await apiClient.get('/api/v1/roles');
+    return data;
+  }
+
+  /**
    * Create a new branch
    */
   async createBranch(branchData: {

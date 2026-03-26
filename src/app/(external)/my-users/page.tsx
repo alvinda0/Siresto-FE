@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useAuthMe } from "@/hooks/useAuthMe";
-import { companyService } from "@/services/company.service";
+import { userService } from "@/services/user.service";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -23,42 +23,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Building2, Plus, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { Users, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Plus } from "lucide-react";
 import LoadingState from "@/components/LoadingState";
 import { ErrorState } from "@/components/ErrorState";
-import { CreateBranchModal } from "@/components/branch/CreateBranchModal";
+import { CreateUserModal } from "@/components/user/CreateUserModal";
 
-const BranchesPage = () => {
+const ExternalUsersPage = () => {
   const router = useRouter();
   const { data: user, isLoading: userLoading } = useAuthMe();
-  const [companyId, setCompanyId] = useState<string>("");
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  // Get company first
-  const { data: companies } = useQuery({
-    queryKey: ["companies"],
-    queryFn: () => companyService.getMyCompanies(),
-    enabled: !!user,
-  });
-
-  useEffect(() => {
-    if (companies && companies.length > 0) {
-      setCompanyId(companies[0].id);
-    }
-  }, [companies]);
-
-  // Get branches
   const {
-    data: branchResponse,
+    data: usersResponse,
     isLoading,
     isError,
     error,
   } = useQuery({
-    queryKey: ["branches", companyId, page, limit],
-    queryFn: () => companyService.getBranchesByCompanyId(companyId),
-    enabled: !!companyId,
+    queryKey: ["external-users", page, limit],
+    queryFn: () => userService.getExternalUsers({ page, limit }),
+    enabled: !!user,
   });
 
   useEffect(() => {
@@ -86,41 +71,41 @@ const BranchesPage = () => {
     return (
       <ErrorState
         code={500}
-        title="Failed to load branches"
+        title="Failed to load users"
         description={error?.message || "An error occurred"}
       />
     );
   }
 
-  const branches = branchResponse?.data || [];
+  const users = usersResponse?.data || [];
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Branches</h1>
+          <h1 className="text-3xl font-bold">Users</h1>
           <p className="text-gray-600 mt-1">
-            Manage your company branches
+            View all users in your organization
           </p>
         </div>
         <Button onClick={() => setIsCreateModalOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
-          Add Branch
+          Add User
         </Button>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Building2 className="h-5 w-5" />
-            Branches List
+            <Users className="h-5 w-5" />
+            Users List
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          {branches.length === 0 ? (
+          {users.length === 0 ? (
             <div className="py-12 text-center">
-              <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No branches found</p>
+              <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600">No users found</p>
             </div>
           ) : (
             <>
@@ -128,25 +113,32 @@ const BranchesPage = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Branch Name</TableHead>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Role</TableHead>
                       <TableHead>Company</TableHead>
-                      <TableHead>Address</TableHead>
-                      <TableHead>City</TableHead>
-                      <TableHead>Phone</TableHead>
+                      <TableHead>Branch</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Created At</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {branches.map((branch) => (
-                      <TableRow key={branch.id}>
-                        <TableCell className="font-medium">{branch.name}</TableCell>
+                    {users.map((user) => (
+                      <TableRow key={user.id}>
+                        <TableCell className="font-medium">{user.name}</TableCell>
                         <TableCell>
-                          {branch.company ? (
+                          <div>
+                            <p className="font-medium">{user.role.display_name}</p>
+                            <p className="text-xs text-gray-500">
+                              {user.role.description}
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {user.company ? (
                             <div>
-                              <p className="font-medium">{branch.company.name}</p>
+                              <p className="font-medium">{user.company.name}</p>
                               <p className="text-xs text-gray-500">
-                                {branch.company.type}
+                                {user.company.type}
                               </p>
                             </div>
                           ) : (
@@ -154,31 +146,26 @@ const BranchesPage = () => {
                           )}
                         </TableCell>
                         <TableCell>
-                          <div>
-                            <p className="text-sm">{branch.address}</p>
-                            <p className="text-xs text-gray-500">
-                              {branch.postal_code}
-                            </p>
-                          </div>
+                          {user.branch ? (
+                            <div>
+                              <p className="font-medium">{user.branch.name}</p>
+                              <p className="text-xs text-gray-500">
+                                {user.branch.city}, {user.branch.province}
+                              </p>
+                            </div>
+                          ) : (
+                            <span className="text-gray-400">-</span>
+                          )}
                         </TableCell>
-                        <TableCell>
-                          <div>
-                            <p className="text-sm">{branch.city}</p>
-                            <p className="text-xs text-gray-500">
-                              {branch.province}
-                            </p>
-                          </div>
-                        </TableCell>
-                        <TableCell>{branch.phone}</TableCell>
                         <TableCell>
                           <Badge
-                            variant={branch.is_active ? "default" : "destructive"}
+                            variant={user.is_active ? "default" : "destructive"}
                           >
-                            {branch.is_active ? "Active" : "Inactive"}
+                            {user.is_active ? "Active" : "Inactive"}
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          {new Date(branch.created_at).toLocaleDateString("id-ID", {
+                          {new Date(user.created_at).toLocaleDateString("id-ID", {
                             year: "numeric",
                             month: "short",
                             day: "numeric",
@@ -191,7 +178,7 @@ const BranchesPage = () => {
               </div>
 
               {/* Pagination */}
-              {branchResponse?.meta && (
+              {usersResponse?.meta && (
                 <div className="flex items-center justify-between px-6 py-4 border-t">
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <span>Rows per page:</span>
@@ -216,7 +203,7 @@ const BranchesPage = () => {
 
                   <div className="flex items-center gap-6">
                     <span className="text-sm text-gray-600">
-                      {((page - 1) * limit) + 1}-{Math.min(page * limit, branchResponse.meta.total_items)} of {branchResponse.meta.total_items}
+                      {((page - 1) * limit) + 1}-{Math.min(page * limit, usersResponse.meta.total_items)} of {usersResponse.meta.total_items}
                     </span>
 
                     <div className="flex items-center gap-1">
@@ -243,7 +230,7 @@ const BranchesPage = () => {
                         size="icon"
                         className="h-8 w-8"
                         onClick={() => setPage(page + 1)}
-                        disabled={page === branchResponse.meta.total_pages}
+                        disabled={page === usersResponse.meta.total_pages}
                       >
                         <ChevronRight className="h-4 w-4" />
                       </Button>
@@ -251,8 +238,8 @@ const BranchesPage = () => {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8"
-                        onClick={() => setPage(branchResponse.meta.total_pages)}
-                        disabled={page === branchResponse.meta.total_pages}
+                        onClick={() => setPage(usersResponse.meta.total_pages)}
+                        disabled={page === usersResponse.meta.total_pages}
                       >
                         <ChevronsRight className="h-4 w-4" />
                       </Button>
@@ -265,13 +252,12 @@ const BranchesPage = () => {
         </CardContent>
       </Card>
 
-      <CreateBranchModal
+      <CreateUserModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
-        companyId={companyId}
       />
     </div>
   );
 };
 
-export default BranchesPage;
+export default ExternalUsersPage;
