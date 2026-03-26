@@ -1,14 +1,36 @@
 // types/auth.ts
 
 // User Type - Updated to match new API response
-export interface User {
-  user_id: string
+export interface Role {
+  id: string
   name: string
-  role_name: string
+  display_name: string
+  type: 'INTERNAL' | 'EXTERNAL'
+  description: string
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface Company {
+  id: string
+  name: string
+  type: string
+  owner_id: string
+  created_at: string
+  updated_at: string
+}
+
+export interface User {
+  id: string
+  name: string
   role_id: string
-  is_internal: boolean
-  is_verified: boolean
-  is_2fa: boolean
+  role: Role
+  company_id: string
+  company: Company
+  is_active: boolean
+  created_at: string
+  updated_at: string
 }
 
 // Login Types
@@ -31,6 +53,8 @@ export interface LoginResponse {
 export interface UserResponse {
   success: boolean
   message: string
+  status: number
+  timestamp: string
   data: User
 }
 

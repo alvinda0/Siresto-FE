@@ -1,7 +1,6 @@
 // hooks/useTheme.ts
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { themeService } from "@/services/theme.service";
 import { useEffect, useState } from "react";
 import { Theme } from "@/types/theme";
 
@@ -27,9 +26,11 @@ export const useTheme = () => {
   } = useQuery({
     queryKey: ["theme"],
     queryFn: async () => {
-      // Fetch semua themes (gunakan limit besar untuk mendapatkan semua)
-      const response = await themeService.getThemes({ page: 1, limit: 100 });
-      return response;
+      // Return default theme for now
+      return {
+        data: [],
+        metadata: { total: 0, page: 1, limit: 100 }
+      };
     },
     staleTime: 1000 * 60 * 5, // Cache selama 5 menit
     gcTime: 1000 * 60 * 60, // Garbage collection setelah 1 jam

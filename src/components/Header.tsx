@@ -30,7 +30,6 @@ import { getFilteredMenuItems, getMenuItemByPath } from "@/constants/menuItems";
 import { useAuthMe } from "@/hooks/useAuthMe";
 import { useTheme } from "@/hooks/useTheme";
 import Link from "next/link";
-import { AnnouncementSidebar } from "./announcement/AnnouncementSidebar";
 
 const Divider = ({ className = "my-2" }: { className?: string }) => (
   <div className={`border-t border-gray-200 ${className}`} />
@@ -347,8 +346,6 @@ const Header = () => {
                   );
                 })}
               </nav>
-
-              <AnnouncementSidebar />
             </div>
           </SheetContent>
         </Sheet>

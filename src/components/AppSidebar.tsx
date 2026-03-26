@@ -17,7 +17,6 @@ import { ChevronDown } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useAuthMe } from "@/hooks/useAuthMe";
 import { useTheme } from "@/hooks/useTheme";
-import { AnnouncementSidebar } from "@/components/announcement/AnnouncementSidebar";
 
 interface AppSidebarProps {
   activeItem?: string;
@@ -220,8 +219,6 @@ const AppSidebar = ({ activeItem = "Dashboard" }: AppSidebarProps) => {
           })}
         </SidebarMenu>
       </SidebarContent>
-      
-      <AnnouncementSidebar />
     </Sidebar>
   );
 };

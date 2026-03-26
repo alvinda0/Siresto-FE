@@ -93,6 +93,21 @@ class AuthService {
     }
   }
 
+  isInternalUser(user: User): boolean {
+    return user.role.type === 'INTERNAL'
+  }
+
+  isExternalUser(user: User): boolean {
+    return user.role.type === 'EXTERNAL'
+  }
+
+  getDashboardRoute(user: User): string {
+    if (this.isInternalUser(user)) {
+      return '/internal'
+    }
+    return '/dashboard'
+  }
+
   async forgotPassword(payload: ForgotPasswordPayload): Promise<string> {
     const { data } = await apiClient.post<ForgotPasswordResponse>(
       '/api/v1/auth/forget-password',

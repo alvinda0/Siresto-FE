@@ -46,6 +46,56 @@ export interface SubMenuItem {
   roles?: string[];
 }
 
+export const INTERNAL_MENU_ITEMS: MenuItem[] = [
+  // === DASHBOARD ===
+  {
+    name: "dashboard-internal",
+    title: "Dashboard",
+    href: "/internal",
+    icon: LayoutDashboard,
+  },
+
+  // === COMPANIES ===
+  {
+    name: "companies",
+    title: "Companies",
+    href: "/internal/companies",
+    icon: Building2,
+  },
+
+  // === USERS ===
+  {
+    name: "users-internal",
+    title: "Users",
+    href: "/internal/users",
+    icon: Users,
+  },
+
+  // === REPORTS ===
+  {
+    name: "reports-internal",
+    title: "Reports",
+    href: "/internal/reports",
+    icon: FileText,
+  },
+
+  // === AUDIT LOG ===
+  {
+    name: "audit-internal",
+    title: "Audit Log",
+    href: "/internal/audit",
+    icon: BookDashed,
+  },
+
+  // === SETTINGS ===
+  {
+    name: "settings-internal",
+    title: "Settings",
+    href: "/internal/settings",
+    icon: Palette,
+  },
+];
+
 export const MENU_ITEMS: MenuItem[] = [
   // === DASHBOARD ===
   {
