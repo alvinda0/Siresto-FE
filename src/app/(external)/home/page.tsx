@@ -4,9 +4,9 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthMe } from '@/hooks/useAuthMe'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ShoppingBag, Users, DollarSign, TrendingUp } from "lucide-react"
+import { UtensilsCrossed, Users, DollarSign, TrendingUp, Clock, CheckCircle } from "lucide-react"
 
-const DashboardPage = () => {
+const HomePage = () => {
   const router = useRouter()
   const { data: user, isLoading } = useAuthMe()
 
@@ -18,9 +18,9 @@ const DashboardPage = () => {
       return
     }
 
-    // Check if user is external
+    // Check if user is internal
     if (user.role.type !== 'EXTERNAL') {
-      router.push('/dashboard/internal')
+      router.push('/dashboard')
     }
   }, [user, isLoading, router])
 
@@ -43,7 +43,7 @@ const DashboardPage = () => {
           Selamat Datang, {user.name}!
         </h1>
         <p className="text-blue-100">
-          {user.company.name} - {user.role.display_name}
+          {user.company?.name} - {user.role.display_name}
         </p>
       </div>
 
@@ -52,7 +52,7 @@ const DashboardPage = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
-            <ShoppingBag className="h-4 w-4 text-muted-foreground" />
+            <UtensilsCrossed className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">0</div>
@@ -64,20 +64,20 @@ const DashboardPage = () => {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Customers</CardTitle>
+            <CardTitle className="text-sm font-medium">Active Tables</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">0</div>
             <p className="text-xs text-muted-foreground">
-              Pelanggan aktif
+              Meja sedang digunakan
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">Revenue Today</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -102,6 +102,48 @@ const DashboardPage = () => {
         </Card>
       </div>
 
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pending Orders</CardTitle>
+            <Clock className="h-4 w-4 text-orange-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">0</div>
+            <p className="text-xs text-muted-foreground">
+              Menunggu diproses
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Completed Orders</CardTitle>
+            <CheckCircle className="h-4 w-4 text-green-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">0</div>
+            <p className="text-xs text-muted-foreground">
+              Selesai hari ini
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Average Order</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">Rp 0</div>
+            <p className="text-xs text-muted-foreground">
+              Rata-rata per pesanan
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Recent Orders */}
       <Card>
         <CardHeader>
@@ -117,4 +159,4 @@ const DashboardPage = () => {
   )
 }
 
-export default DashboardPage
+export default HomePage

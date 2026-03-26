@@ -35,8 +35,13 @@ const AppSidebar = ({ activeItem = "Dashboard" }: AppSidebarProps) => {
     sidebarHeaderForeground,
   } = useTheme();
 
-  const userRole = user?.role_name || "";
-  const filteredMenuItems = getFilteredMenuItems(userRole);
+  const userRole = user?.role?.name || "";
+  const isInternalUser = user?.role?.type === "INTERNAL";
+  
+  // Use INTERNAL_MENU_ITEMS for internal users, MENU_ITEMS for external users
+  const filteredMenuItems = isInternalUser 
+    ? getFilteredMenuItems(userRole, true) 
+    : getFilteredMenuItems(userRole);
 
   const toggleMenu = (menuName: string) => {
     setOpenMenus((prev) =>
@@ -117,17 +122,25 @@ const AppSidebar = ({ activeItem = "Dashboard" }: AppSidebarProps) => {
       className="border-r bg-white" 
     >
       <SidebarHeader 
-        className="px-4 py-5 border-b pl-12"
+        className="px-4 py-4 border-b"
         style={{ 
           backgroundColor: sidebarHeaderPrimary,
         }}
       >
-        <h2 
-          className="text-xl font-bold"
-          style={{ color: sidebarHeaderForeground }}
-        >
-          Menu
-        </h2>
+        <div className="flex items-center gap-2.5 pl-2">
+          <div
+            className="h-9 w-9 rounded-lg flex items-center justify-center"
+            style={{ backgroundColor: sidebarHeaderForeground }}
+          >
+            <span className="font-bold text-base" style={{ color: sidebarHeaderPrimary }}>S</span>
+          </div>
+          <h2 
+            className="text-lg font-bold"
+            style={{ color: sidebarHeaderForeground }}
+          >
+            Siresto
+          </h2>
+        </div>
       </SidebarHeader>
 
       <SidebarContent className="px-3 py-3">

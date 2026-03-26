@@ -26,8 +26,8 @@ export interface User {
   name: string
   role_id: string
   role: Role
-  company_id: string
-  company: Company
+  company_id?: string
+  company?: Company
   is_active: boolean
   created_at: string
   updated_at: string

@@ -11,11 +11,9 @@ import {
   LayoutList,
   Building,
   Grid3x3,
-  Tags,
   DollarSign,
   HandCoins,
   Send,
-  Coins,
   Bell,
   FileText,
   Truck,
@@ -26,6 +24,14 @@ import {
   Handshake,
   Clock,
   BookDashed,
+  Home,
+  Table2,
+  ShoppingCart,
+  PlusCircle,
+  Package,
+  FolderTree,
+  Trash2,
+  ShoppingBag,
 } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 
@@ -51,411 +57,128 @@ export const INTERNAL_MENU_ITEMS: MenuItem[] = [
   {
     name: "dashboard-internal",
     title: "Dashboard",
-    href: "/internal",
+    href: "/dashboard",
     icon: LayoutDashboard,
+    roles: ["SUPER_ADMIN", "SUPPORT", "FINANCE"],
   },
 
   // === COMPANIES ===
   {
     name: "companies",
     title: "Companies",
-    href: "/internal/companies",
+    href: "/companies",
     icon: Building2,
+    roles: ["SUPER_ADMIN", "SUPPORT"],
   },
 
   // === USERS ===
   {
     name: "users-internal",
     title: "Users",
-    href: "/internal/users",
+    href: "/users",
     icon: Users,
+    roles: ["SUPER_ADMIN", "SUPPORT"],
   },
 
   // === REPORTS ===
   {
     name: "reports-internal",
     title: "Reports",
-    href: "/internal/reports",
+    href: "/reports",
     icon: FileText,
+    roles: ["SUPER_ADMIN", "FINANCE"],
   },
 
   // === AUDIT LOG ===
   {
     name: "audit-internal",
     title: "Audit Log",
-    href: "/internal/audit",
+    href: "/audit",
     icon: BookDashed,
+    roles: ["SUPER_ADMIN"],
   },
 
   // === SETTINGS ===
   {
     name: "settings-internal",
     title: "Settings",
-    href: "/internal/settings",
+    href: "/settings",
     icon: Palette,
+    roles: ["SUPER_ADMIN"],
   },
 ];
 
 export const MENU_ITEMS: MenuItem[] = [
-  // === DASHBOARD ===
+  // === HOME ===
   {
-    name: "dashboard",
-    title: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-    roles: ["Superuser", "Supervisor", "StaffFinance", "StaffEntry"],
+    name: "home",
+    title: "Home",
+    href: "/home",
+    icon: Home,
+    roles: ["OWNER", "ADMIN", "CASHIER", "KITCHEN", "WAITER"],
   },
 
-  // === REPORT ===
+  // === MEJA (TABLES) ===
   {
-    name: "report",
-    title: "Reports & Analytics",
-    href: "/report",
-    icon: BookDashed,
-    roles: ["Superuser", "Supervisor", "StaffFinance"],
+    name: "tables",
+    title: "Meja",
+    href: "/tables",
+    icon: Table2,
+    roles: ["OWNER", "ADMIN", "WAITER"],
   },
 
-  // === TRANSACTION ===
+  // === ORDER ===
   {
-    name: "transaction",
-    title: "Transaction",
-    href: "/transaction",
-    icon: ArrowRightLeft,
-    roles: ["Superuser", "Supervisor","StaffEntry","StaffFinance"],
+    name: "orders",
+    title: "Order",
+    href: "/orders",
+    icon: ShoppingCart,
+    roles: ["OWNER", "ADMIN", "CASHIER", "WAITER"],
   },
 
-
-  // === WALLET ===
+  // === CREATE ORDER ===
   {
-    name: "wallet",
-    title: "Wallet",
-    href: "/wallet",
-    icon: Wallet,
-    roles: ["Superuser", "Supervisor", "StaffFinance"],
-    submenu: [
-      {
-        name: "wallet-platform",
-        title: "Platform",
-        href: "/wallet/platform",
-        icon: LayoutList,
-        roles: ["Superuser", "Supervisor", "StaffFinance"],
-      },
-      {
-        name: "wallet-merchant",
-        title: "Merchant",
-        href: "/wallet/merchant",
-        icon: LayoutList,
-        roles: ["Superuser", "Supervisor", "StaffFinance"],
-      },
-    ],
+    name: "create-order",
+    title: "Create Order",
+    href: "/orders/create",
+    icon: PlusCircle,
+    roles: ["CASHIER", "WAITER"],
   },
 
-  // === DISBURSEMENT ===
+  // === PRODUK (PRODUCTS) ===
   {
-    name: "disbursement-idr",
-    title: "Disbursement IDR",
-    href: "/disbursement/idr",
-    icon: BanknoteArrowDown,
-    roles: ["Superuser", "Supervisor", "StaffFinance"],
-    submenu: [
-      {
-        name: "disbursement-platform",
-        title: "Platform",
-        href: "/disbursement/idr/platform/list",
-        icon: LayoutList,
-        roles: ["Superuser", "Supervisor", "StaffFinance"],
-      },
-      {
-        name: "disbursement-merchant",
-        title: "Merchant",
-        href: "/disbursement/idr/merchant/list",
-        icon: LayoutList,
-        roles: ["Superuser", "Supervisor", "StaffFinance"],
-      },
-    ],
-  },
-  // === DISBURSEMENT USDT===
-  {
-    name: "disbursement-usdt",
-    title: "Disbursement USDT",
-    href: "/disbursement/usdt",
-    icon: BanknoteArrowDown,
-    roles: ["Superuser", "Supervisor", "StaffFinance"],
+    name: "products",
+    title: "Produk",
+    href: "/products",
+    icon: Package,
+    roles: ["OWNER", "ADMIN"],
   },
 
-   // === TRANSFER ===
+  // === KATEGORI (CATEGORIES) ===
   {
-    name: "transfer",
-    title: "Transfer",
-    href: "/transfer",
-    icon: Send,
-    roles: ["Superuser", "Supervisor", "StaffFinance", "StaffEntry"],
+    name: "categories",
+    title: "Kategori",
+    href: "/categories",
+    icon: FolderTree,
+    roles: ["OWNER", "ADMIN"],
   },
 
-  // === SETTLEMENT ===
+  // === WASTE ===
   {
-    name: "settlement",
-    title: "Settlement",
-    href: "/settlement",
-    icon: HandCoins,
-    roles: ["Superuser", "Supervisor", "StaffFinance"],
-    submenu: [
-      {
-        name: "settlement-platform",
-        title: "Platform",
-        href: "/settlement/platform",
-        icon: LayoutList,
-        roles: ["Superuser", "Supervisor", "StaffFinance"],
-      },
-      {
-        name: "settlement-merchant",
-        title: "Merchant",
-        href: "/settlement/merchant",
-        icon: LayoutList,
-        roles: ["Superuser", "Supervisor", "StaffFinance"],
-      },
-    ],
+    name: "waste",
+    title: "Waste",
+    href: "/waste",
+    icon: Trash2,
+    roles: ["OWNER", "ADMIN", "KITCHEN"],
   },
 
-  // === USER MANAGEMENT ===
+  // === TOKO (STORE SETTINGS) ===
   {
-    name: "users",
-    title: "Users",
-    href: "/users",
-    icon: Users,
-    roles: ["Superuser", "Supervisor", "StaffEntry"],
-    submenu: [
-      {
-        name: "users-list",
-        title: "User List",
-        href: "/users/list",
-        icon: LayoutList,
-        roles: ["Superuser", "Supervisor", "StaffEntry"],
-      },
-      {
-        name: "users-blocked",
-        title: "Blocked Users",
-        href: "/users/blocked",
-        icon: User,
-        roles: ["Superuser", "Supervisor", "StaffEntry"],
-      },
-    ],
-  },
-
-  
-  // === PARTNER DASHBOARD ===
-
-  {
-    name: "partners",
-    title: "Partner",
-    href: "/partner",
-    icon: Handshake,
-    roles: ["Superuser", "Supervisor"],
-  },
-
-  // === PLATFORM MANAGEMENT ===
-
-  {
-    name: "platform-list",
-    title: "Platform",
-    href: "/platforms",
-    icon: Server,
-    roles: ["StaffEntry"],
-    submenu: [
-      {
-        name: "platform-list",
-        title: "Platform List",
-        href: "/platforms/list",
-        icon: LayoutList,
-        roles: ["StaffEntry"],
-      },
-      {
-        name: "platform-bank",
-        title: "Platform Bank",
-        href: "/platforms/bank",
-        icon: Building,
-        roles: ["StaffEntry"],
-      },
-    ],
-  },
-
-  {
-    name: "platform-bank",
-    title: "Bank Platform",
-    href: "/platforms/bank",
-    icon: Building,
-    roles: ["StaffFinance"],
-  },
-
-  {
-    name: "platforms",
-    title: "Platforms",
-    href: "/platforms",
-    icon: Server,
-    roles: ["Superuser", "Supervisor"],
-    submenu: [
-      {
-        name: "platform-list",
-        title: "Platform List",
-        href: "/platforms/list",
-        icon: LayoutList,
-        roles: ["Superuser", "Supervisor"],
-      },
-      {
-        name: "platform-bank",
-        title: "Platform Bank",
-        href: "/platforms/bank",
-        icon: Building,
-        roles: ["Superuser", "Supervisor"],
-      },
-    ],
-  },
-
-  // === MERCHANT MANAGEMENT ===
-  {
-    name: "merchant",
-    title: "Merchant",
-    href: "/merchant",
-    icon: Store,
-    roles: ["Superuser", "Supervisor", "StaffEntry", "StaffFinance"],
-    submenu: [
-      {
-        name: "merchant-list",
-        title: "List Merchant",
-        href: "/merchant/list",
-        icon: LayoutList,
-        roles: ["Superuser", "Supervisor", "StaffEntry"],
-      },
-      {
-        name: "merchant-analysis",
-        title: "Merchant Analysis",
-        href: "/merchant/analysis",
-        icon: LayoutDashboard,
-        roles: ["Superuser", "Supervisor", "StaffEntry", "StaffFinance"],
-      },
-      {
-        name: "merchant-requests",
-        title: "Merchant Requests",
-        href: "/merchant/requests",
-        icon: Clock,
-        roles: ["Superuser", "Supervisor", "StaffEntry"],
-      },
-      {
-        name: "merchant-bank",
-        title: "Bank Merchant",
-        href: "/merchant/bank",
-        icon: Building,
-        roles: ["Superuser", "Supervisor", "StaffFinance", "StaffEntry"],
-      },
-      {
-        name: "merchant-type",
-        title: "Merchant Type",
-        href: "/merchant/type",
-        icon: Grid3x3,
-        roles: ["Superuser", "Supervisor", "StaffEntry"],
-      },
-      {
-        name: "merchant-fee",
-        title: "Merchant Fee",
-        href: "/merchant/fee",
-        icon: DollarSign,
-        roles: ["Superuser", "Supervisor", "StaffFinance"],
-      },
-    ],
-  },
-
-  // === AGENT MANAGEMENT ===
-  {
-    name: "agent",
-    title: "Agent",
-    href: "/agent",
-    icon: Building2,
-    roles: ["Superuser", "Supervisor", "StaffEntry"],
-    submenu: [
-      {
-        name: "agent-list",
-        title: "Agent List",
-        href: "/agent/list",
-        icon: LayoutList,
-        roles: ["Superuser", "Supervisor", "StaffEntry"],
-      },
-      {
-        name: "agent-type",
-        title: "Agent Type",
-        href: "/agent/type",
-        icon: LayoutList,
-        roles: ["Superuser", "Supervisor", "StaffEntry"],
-      },
-    ],
-  },
-
-  {
-    name: "script",
-    title: "Script Engine",
-    href: "/script",
-    icon: BookIcon,
-    roles: ["Superuser", "Supervisor", "StaffEntry"],
-  },
-
-  // ===  CREDENTIALS ===
-  {
-    name: "credentials",
-    title: "Credentials",
-    href: "/credentials",
-    icon: Key,
-    roles: ["Superuser", "Supervisor", "StaffEntry"],
-    submenu: [
-      {
-        name: "credentials-agent",
-        title: "Credentials Agent",
-        href: "/credentials/agent",
-        icon: LayoutList,
-        roles: ["Superuser", "Supervisor", "StaffEntry"],
-      },
-      {
-        name: "credentials-merchant",
-        title: "Credentials Merchant",
-        href: "/credentials/merchant",
-        icon: Grid3x3,
-        roles: ["Superuser", "Supervisor", "StaffEntry"],
-      },
-    ],
-  },
-
-  // === VENDOR ===
-  {
-    name: "vendor",
-    title: "Vendor",
-    href: "/vendor",
-    icon: Truck,
-    roles: ["Superuser", "Supervisor"],
-  },
-
-  // === ANNOUNCEMENT ===
-  {
-    name: "announcements",
-    title: "Announcement",
-    href: "/announcements",
-    icon: Bell,
-    roles: ["Superuser", "Supervisor", "StaffFinance", "StaffEntry"],
-  },
-
-  // === THEME ===
-  {
-    name: "theme",
-    title: "Theme",
-    href: "/theme",
-    icon: Palette,
-    roles: ["Superuser", "Supervisor"],
-  },
-
-  // === AUDIT MANAGEMENT ===
-  {
-    name: "audit",
-    title: "Audit Log",
-    href: "/audit-log",
-    icon: FileText,
-    roles: ["Superuser", "Supervisor"],
+    name: "store",
+    title: "Toko",
+    href: "/store",
+    icon: ShoppingBag,
+    roles: ["OWNER", "ADMIN"],
   },
 ];
 
@@ -482,8 +205,10 @@ export const hasMenuAccess = (
 
 // Filter menu items berdasarkan role user
 // Updated: menerima userRole sebagai string langsung dari API (role_name)
-export const getFilteredMenuItems = (userRole?: string): MenuItem[] => {
-  return MENU_ITEMS.filter((item) => {
+export const getFilteredMenuItems = (userRole?: string, isInternal: boolean = false): MenuItem[] => {
+  const menuItems = isInternal ? INTERNAL_MENU_ITEMS : MENU_ITEMS;
+  
+  return menuItems.filter((item) => {
     // Check akses ke main menu
     const hasMainMenuAccess = hasMenuAccess(item.roles, userRole);
 

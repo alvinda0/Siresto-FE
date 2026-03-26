@@ -90,14 +90,23 @@ const ProfilePage = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div>
-              <label className="text-sm font-medium text-gray-500">Company Name</label>
-              <p className="text-base font-semibold mt-1">{user.company.name}</p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-500">Company Type</label>
-              <p className="text-base font-semibold mt-1">{user.company.type}</p>
-            </div>
+            {user.company && (
+              <>
+                <div>
+                  <label className="text-sm font-medium text-gray-500">Company Name</label>
+                  <p className="text-base font-semibold mt-1">{user.company.name}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-500">Company Type</label>
+                  <p className="text-base font-semibold mt-1">{user.company.type}</p>
+                </div>
+              </>
+            )}
+            {!user.company && (
+              <div>
+                <p className="text-sm text-gray-500">Internal user - No company assigned</p>
+              </div>
+            )}
             <div>
               <label className="text-sm font-medium text-gray-500 flex items-center gap-2">
                 <Shield className="h-4 w-4" />

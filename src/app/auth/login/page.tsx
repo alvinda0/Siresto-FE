@@ -31,7 +31,16 @@ const LoginPage = () => {
     try {
       await authService.login({ email, password });
       toast.success("Login berhasil!");
-      router.push("/dashboard");
+      
+      // Get user data to check role type
+      const userData = await authService.getCurrentUser();
+      
+      // Redirect based on role type
+      if (userData.role.type === 'INTERNAL') {
+        router.push("/dashboard");
+      } else {
+        router.push("/home");
+      }
     } catch (err) {
       const errorMessage = getErrorMessage(err);
       toast.error(errorMessage);
