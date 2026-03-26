@@ -108,7 +108,7 @@ export const INTERNAL_MENU_ITEMS: MenuItem[] = [
   },
 ];
 
-export const MENU_ITEMS: MenuItem[] = [
+export const EXTERNAL_MENU_ITEMS: MenuItem[] = [
   // === HOME ===
   {
     name: "home",
@@ -116,6 +116,58 @@ export const MENU_ITEMS: MenuItem[] = [
     href: "/home",
     icon: Home,
     roles: ["OWNER", "ADMIN", "CASHIER", "KITCHEN", "WAITER"],
+  },
+
+ 
+
+  // === MY COMPANY ===
+  {
+    name: "my-company",
+    title: "My Company",
+    href: "/my-company",
+    icon: Building2,
+    roles: ["OWNER", "ADMIN"],
+  },
+
+  // === BRANCHES ===
+  {
+    name: "branches",
+    title: "Branches",
+    href: "/branches",
+    icon: Building,
+    roles: ["OWNER", "ADMIN"],
+  },
+
+  // === USERS ===
+  {
+    name: "users",
+    title: "Users",
+    href: "/users",
+    icon: Users,
+    roles: ["OWNER", "ADMIN"],
+    submenu: [
+      {
+        name: "users-list",
+        title: "User List",
+        href: "/users/list",
+        icon: Users,
+        roles: ["OWNER", "ADMIN"],
+      },
+      {
+        name: "users-create",
+        title: "Create User",
+        href: "/users/create",
+        icon: PlusCircle,
+        roles: ["OWNER", "ADMIN"],
+      },
+      {
+        name: "users-blocked",
+        title: "Blocked Users",
+        href: "/users/blocked",
+        icon: Trash2,
+        roles: ["OWNER", "ADMIN"],
+      },
+    ],
   },
 
   // === MEJA (TABLES) ===
@@ -182,6 +234,9 @@ export const MENU_ITEMS: MenuItem[] = [
   },
 ];
 
+// Legacy export for backward compatibility
+export const MENU_ITEMS: MenuItem[] = EXTERNAL_MENU_ITEMS;
+
 // Helper function untuk check apakah user punya akses ke menu
 export const hasMenuAccess = (
   menuRoles?: string[],
@@ -206,7 +261,7 @@ export const hasMenuAccess = (
 // Filter menu items berdasarkan role user
 // Updated: menerima userRole sebagai string langsung dari API (role_name)
 export const getFilteredMenuItems = (userRole?: string, isInternal: boolean = false): MenuItem[] => {
-  const menuItems = isInternal ? INTERNAL_MENU_ITEMS : MENU_ITEMS;
+  const menuItems = isInternal ? INTERNAL_MENU_ITEMS : EXTERNAL_MENU_ITEMS;
   
   return menuItems.filter((item) => {
     // Check akses ke main menu
@@ -233,16 +288,20 @@ export const getFilteredMenuItems = (userRole?: string, isInternal: boolean = fa
 };
 
 // Get menu item by name
-export const getMenuItemByName = (name: string): MenuItem | undefined => {
-  return MENU_ITEMS.find((item) => item.name === name);
+export const getMenuItemByName = (name: string, isInternal: boolean = false): MenuItem | undefined => {
+  const menuItems = isInternal ? INTERNAL_MENU_ITEMS : EXTERNAL_MENU_ITEMS;
+  return menuItems.find((item) => item.name === name);
 };
 
 // Get menu item by current pathname
 export const getMenuItemByPath = (
-  pathname: string
+  pathname: string,
+  isInternal: boolean = false
 ): { menuItem: MenuItem | undefined; subMenuItem: SubMenuItem | undefined } => {
+  const menuItems = isInternal ? INTERNAL_MENU_ITEMS : EXTERNAL_MENU_ITEMS;
+  
   // First: Try exact match untuk main menu
-  for (const item of MENU_ITEMS) {
+  for (const item of menuItems) {
     if (pathname === item.href) {
       return { menuItem: item, subMenuItem: undefined };
     }
@@ -258,7 +317,7 @@ export const getMenuItemByPath = (
   }
 
   // Second: Try partial match (untuk detail pages, edit pages, dll)
-  for (const item of MENU_ITEMS) {
+  for (const item of menuItems) {
     // Check apakah pathname dimulai dengan href menu (contoh: /users/detail/123 starts with /users)
     if (pathname.startsWith(item.href + "/")) {
       // Check dulu apakah ada submenu yang lebih spesifik
@@ -287,8 +346,9 @@ export const getMenuItemByPath = (
 };
 
 // Get menu items with active status
-export const getMenuItemsWithActiveStatus = (activeMenuItem: string) => {
-  return MENU_ITEMS.map((item) => ({
+export const getMenuItemsWithActiveStatus = (activeMenuItem: string, isInternal: boolean = false) => {
+  const menuItems = isInternal ? INTERNAL_MENU_ITEMS : EXTERNAL_MENU_ITEMS;
+  return menuItems.map((item) => ({
     ...item,
     active: activeMenuItem === item.name,
   }));
