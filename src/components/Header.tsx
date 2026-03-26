@@ -10,8 +10,6 @@ import {
   LogOut,
   User,
   UserLock,
-  Shield,
-  ShieldCheck,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -59,9 +57,8 @@ const Header = () => {
   const currentMenuName = menuItem?.name || "Dashboard";
 
   const userName = user?.name || "User";
-  const userRole = user?.role_name || "User";
+  const userRole = user?.role?.name || "User";
 
-  const twoFAEnabled = user?.is_2fa || false;
   const filteredMenuItems = getFilteredMenuItems(userRole);
 
   const toggleMobileMenu = (menuName: string) => {
@@ -107,11 +104,6 @@ const Header = () => {
 
   const handleProfile = () => {
     router.push("/profile");
-    setIsMobileProfileOpen(false);
-  };
-
-  const handleTwoFactorAuth = () => {
-    router.push("/profile/two-factor");
     setIsMobileProfileOpen(false);
   };
 
@@ -169,25 +161,6 @@ const Header = () => {
               >
                 <UserLock className="w-4 h-4 mr-2" />
                 Change Password
-              </button>
-
-              <button
-                className="flex items-center justify-between w-full px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
-                onClick={handleTwoFactorAuth}
-              >
-                <div className="flex items-center">
-                  {twoFAEnabled ? (
-                    <ShieldCheck className="w-4 h-4 mr-2 text-green-600" />
-                  ) : (
-                    <Shield className="w-4 h-4 mr-2 text-gray-500" />
-                  )}
-                  <span>{twoFAEnabled ? "Manage 2FA" : "Enable 2FA"}</span>
-                </div>
-                {twoFAEnabled && (
-                  <Badge className="bg-green-100 text-green-700 text-xs border-0">
-                    Active
-                  </Badge>
-                )}
               </button>
 
               <Divider />
@@ -407,36 +380,6 @@ const Header = () => {
                 >
                   <UserLock className="w-5 h-5 mr-3 text-gray-600" />
                   <span className="font-semibold">Change Password</span>
-                </button>
-
-                <button
-                  className="flex items-center justify-between w-full px-4 py-3 rounded-xl transition-all border border-gray-200 shadow-sm bg-white hover:border-gray-300"
-                  onClick={handleTwoFactorAuth}
-                  style={{ color: primaryTextColor }}
-                >
-                  <div className="flex items-center">
-                    {twoFAEnabled ? (
-                      <ShieldCheck className="w-5 h-5 mr-3 text-green-600" />
-                    ) : (
-                      <Shield className="w-5 h-5 mr-3 text-gray-600" />
-                    )}
-                    <span className="font-semibold">
-                      {twoFAEnabled ? "Manage 2FA" : "Enable 2FA"}
-                    </span>
-                  </div>
-
-                  {twoFAEnabled ? (
-                    <Badge className="bg-green-500/20 text-green-600 border-green-500/30 text-xs font-bold">
-                      Active
-                    </Badge>
-                  ) : (
-                    <Badge
-                      variant="secondary"
-                      className="bg-gray-200 text-gray-600 text-xs"
-                    >
-                      Inactive
-                    </Badge>
-                  )}
                 </button>
               </nav>
 
