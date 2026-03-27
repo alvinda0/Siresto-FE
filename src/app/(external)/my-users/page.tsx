@@ -41,9 +41,14 @@ const ExternalUsersPage = () => {
     isError,
     error,
   } = useQuery({
-    queryKey: ["external-users", page, limit],
-    queryFn: () => userService.getExternalUsers({ page, limit }),
-    enabled: !!user,
+    queryKey: ["external-users", user?.company_id, page, limit],
+    queryFn: () => {
+      if (!user?.company_id) {
+        throw new Error("Company ID not found");
+      }
+      return userService.getExternalUsers(user.company_id, { page, limit });
+    },
+    enabled: !!user && !!user.company_id,
   });
 
   useEffect(() => {

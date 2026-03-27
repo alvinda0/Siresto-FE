@@ -103,10 +103,12 @@ const BranchesPage = () => {
             Manage your company branches
           </p>
         </div>
-        <Button onClick={() => setIsCreateModalOpen(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Branch
-        </Button>
+        {user.role.name === "OWNER" && (
+          <Button onClick={() => setIsCreateModalOpen(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Branch
+          </Button>
+        )}
       </div>
 
       <Card>

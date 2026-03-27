@@ -98,11 +98,11 @@ class UserService {
   }
 
   /**
-   * Get external users
+   * Get external users by company
    */
-  async getExternalUsers(params?: { page?: number; limit?: number }): Promise<ExternalUserResponse> {
+  async getExternalUsers(companyId: string, params?: { page?: number; limit?: number }): Promise<ExternalUserResponse> {
     const { data } = await apiClient.get<ExternalUserResponse>(
-      '/api/v1/external/users',
+      `/api/v1/external/users/company/${companyId}`,
       { params }
     );
     return data;
