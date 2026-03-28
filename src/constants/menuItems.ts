@@ -189,7 +189,7 @@ export const EXTERNAL_MENU_ITEMS: MenuItem[] = [
     title: "Kategori",
     href: "/categories",
     icon: FolderTree,
-    roles: ["OWNER", "ADMIN"],
+    roles: ["OWNER", "ADMIN", "CASHIER", "KITCHEN", "WAITER"],
   },
 
   // === WASTE ===
