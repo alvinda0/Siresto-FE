@@ -24,7 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { FolderTree, Plus, Search } from "lucide-react";
+import { FolderTree, Plus, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import LoadingState from "@/components/LoadingState";
 import { ErrorState } from "@/components/ErrorState";
 import { EditCategoryModal } from "@/components/category/EditCategoryModal";
@@ -39,6 +39,8 @@ const CategoriesPage = () => {
   const [companyId, setCompanyId] = useState<string>("");
   const [branchId, setBranchId] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -77,8 +79,8 @@ const CategoriesPage = () => {
     isError,
     error,
   } = useQuery({
-    queryKey: ["categories", branchId, companyId],
-    queryFn: () => categoryService.getCategories(branchId, companyId),
+    queryKey: ["categories", branchId, companyId, page, limit],
+    queryFn: () => categoryService.getCategories(branchId, companyId, { page, limit }),
     enabled: !!branchId && !!companyId,
   });
 
@@ -115,6 +117,8 @@ const CategoriesPage = () => {
 
   const categories = categoryResponse?.data || [];
   const branches = branchResponse?.data || [];
+  const totalPages = categoryResponse?.meta?.total_pages || 1;
+  const totalItems = categoryResponse?.meta?.total_items || 0;
 
   // Filter categories based on search query
   const filteredCategories = categories.filter((category) =>
@@ -201,16 +205,17 @@ const CategoriesPage = () => {
               </p>
             </div>
           ) : (
-            <div className="rounded-md border-0">
-              <Table>
+            <>
+              <div className="overflow-x-auto">
+                <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Posisi</TableHead>
-                    <TableHead>Nama Kategori</TableHead>
-                    <TableHead>Deskripsi</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Dibuat Pada</TableHead>
-                    <TableHead>Aksi</TableHead>
+                    <TableHead className="w-[100px]">Posisi</TableHead>
+                    <TableHead className="min-w-[200px]">Nama Kategori</TableHead>
+                    <TableHead className="min-w-[250px]">Deskripsi</TableHead>
+                    <TableHead className="w-[120px]">Status</TableHead>
+                    <TableHead className="w-[150px]">Dibuat Pada</TableHead>
+                    <TableHead className="w-[150px]">Aksi</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -270,6 +275,79 @@ const CategoriesPage = () => {
                 </TableBody>
               </Table>
             </div>
+
+            {/* Pagination */}
+            {categoryResponse?.meta && (
+              <div className="flex items-center justify-between px-6 py-4 border-t">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <span>Baris per halaman:</span>
+                  <Select
+                    value={limit.toString()}
+                    onValueChange={(value) => {
+                      setLimit(Number(value));
+                      setPage(1);
+                    }}
+                  >
+                    <SelectTrigger className="w-[70px] h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5</SelectItem>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="25">25</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                      <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex items-center gap-6">
+                  <span className="text-sm text-gray-600">
+                    {((page - 1) * limit) + 1}-{Math.min(page * limit, categoryResponse.meta.total_items)} dari {categoryResponse.meta.total_items}
+                  </span>
+
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => setPage(1)}
+                      disabled={page === 1}
+                    >
+                      <ChevronsLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => setPage(page - 1)}
+                      disabled={page === 1}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => setPage(page + 1)}
+                      disabled={page === categoryResponse.meta.total_pages}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => setPage(categoryResponse.meta.total_pages)}
+                      disabled={page === categoryResponse.meta.total_pages}
+                    >
+                      <ChevronsRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
           )}
         </CardContent>
       </Card>

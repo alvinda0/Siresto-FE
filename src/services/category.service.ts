@@ -12,13 +12,18 @@ class CategoryService {
   /**
    * Get categories by branch and company
    */
-  async getCategories(branchId: string, companyId: string): Promise<CategoryResponse> {
+  async getCategories(
+    branchId: string, 
+    companyId: string, 
+    params?: { page?: number; limit?: number }
+  ): Promise<CategoryResponse> {
     const { data } = await apiClient.get<CategoryResponse>(
       `/api/v1/external/categories`,
       {
         params: {
           branch_id: branchId,
           company_id: companyId,
+          ...params,
         },
       }
     );

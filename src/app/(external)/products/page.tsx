@@ -25,7 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Package, Plus, Search } from "lucide-react";
+import { Package, Plus, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import LoadingState from "@/components/LoadingState";
 import { ErrorState } from "@/components/ErrorState";
 import { Input } from "@/components/ui/input";
@@ -41,6 +41,8 @@ const ProductsPage = () => {
   const [branchId, setBranchId] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(10);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -86,13 +88,19 @@ const ProductsPage = () => {
     isError,
     error,
   } = useQuery({
-    queryKey: ["products", branchId],
+    queryKey: ["products", branchId, page, limit],
     queryFn: () => {
+      const params: { page: number; limit: number; branch_id?: string } = {
+        page,
+        limit,
+      };
+      
       // If OWNER, add branch_id parameter
       if (user?.role.name === "OWNER" && branchId) {
-        return productService.getProducts({ branch_id: branchId });
+        params.branch_id = branchId;
       }
-      return productService.getProducts();
+      
+      return productService.getProducts(params);
     },
     enabled: !!user && (user.role.name !== "OWNER" || !!branchId),
   });
@@ -131,6 +139,8 @@ const ProductsPage = () => {
   const products = productResponse?.data || [];
   const branches = branchResponse?.data || [];
   const categories = categoryResponse?.data || [];
+  const totalPages = productResponse?.meta?.total_pages || 1;
+  const totalItems = productResponse?.meta?.total_items || 0;
 
   // Filter products based on search query and category
   const filteredProducts = products.filter((product) => {
@@ -252,29 +262,36 @@ const ProductsPage = () => {
               </p>
             </div>
           ) : (
-            <div className="rounded-md border-0">
-              <Table>
+            <>
+              <div className="overflow-x-auto">
+                <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Gambar</TableHead>
-                    <TableHead>Posisi</TableHead>
-                    <TableHead>Nama Produk</TableHead>
-                    <TableHead>Kategori</TableHead>
-                    <TableHead>Harga</TableHead>
-                    <TableHead>Stok</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Aksi</TableHead>
+                    <TableHead className="w-[100px] pl-6">Gambar</TableHead>
+                    <TableHead className="w-[100px]">Posisi</TableHead>
+                    <TableHead className="min-w-[200px]">Nama Produk</TableHead>
+                    <TableHead className="w-[150px]">Kategori</TableHead>
+                    <TableHead className="w-[120px]">Harga</TableHead>
+                    <TableHead className="w-[80px]">Stok</TableHead>
+                    <TableHead className="w-[120px]">Status</TableHead>
+                    <TableHead className="w-[150px]">Aksi</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredProducts.map((product) => (
                     <TableRow key={product.id}>
-                      <TableCell>
-                        <img 
-                          src={product.image} 
-                          alt={product.name}
-                          className="w-12 h-12 object-cover rounded"
-                        />
+                      <TableCell className="pl-6">
+                        {product.image ? (
+                          <img 
+                            src={product.image} 
+                            alt={product.name}
+                            className="w-12 h-12 object-cover rounded"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
+                            <Package className="h-6 w-6 text-gray-400" />
+                          </div>
+                        )}
                       </TableCell>
                       <TableCell className="font-medium">
                         {product.position}
@@ -336,6 +353,79 @@ const ProductsPage = () => {
                 </TableBody>
               </Table>
             </div>
+
+            {/* Pagination */}
+            {productResponse?.meta && (
+              <div className="flex items-center justify-between px-6 py-4 border-t">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <span>Baris per halaman:</span>
+                  <Select
+                    value={limit.toString()}
+                    onValueChange={(value) => {
+                      setLimit(Number(value));
+                      setPage(1);
+                    }}
+                  >
+                    <SelectTrigger className="w-[70px] h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5</SelectItem>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="25">25</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                      <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex items-center gap-6">
+                  <span className="text-sm text-gray-600">
+                    {((page - 1) * limit) + 1}-{Math.min(page * limit, productResponse.meta.total_items)} dari {productResponse.meta.total_items}
+                  </span>
+
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => setPage(1)}
+                      disabled={page === 1}
+                    >
+                      <ChevronsLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => setPage(page - 1)}
+                      disabled={page === 1}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => setPage(page + 1)}
+                      disabled={page === productResponse.meta.total_pages}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => setPage(productResponse.meta.total_pages)}
+                      disabled={page === productResponse.meta.total_pages}
+                    >
+                      <ChevronsRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+            </>
           )}
         </CardContent>
       </Card>

@@ -18,6 +18,12 @@ export interface CategoryResponse {
   status: number;
   timestamp: string;
   data: Category[];
+  meta: {
+    page: number;
+    limit: number;
+    total_items: number;
+    total_pages: number;
+  };
 }
 
 export interface CreateCategoryRequest {
