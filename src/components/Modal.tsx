@@ -9,7 +9,7 @@ interface ModalProps {
   onClose: () => void;
   title?: string;
   children: React.ReactNode;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   showCloseButton?: boolean;
 }
 
@@ -28,10 +28,11 @@ export function Modal({
     md: 'max-w-md',
     lg: 'max-w-lg',
     xl: 'max-w-xl',
+    '2xl': 'max-w-2xl',
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
       {/* Backdrop with Glassmorphism */}
       <div
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
@@ -49,11 +50,14 @@ export function Modal({
           shadow-2xl shadow-black/10
           overflow-hidden
           animate-in fade-in-0 zoom-in-95 duration-300
+          my-8
+          max-h-[90vh]
+          flex flex-col
         `}
       >
         {/* Header */}
         {(title || showCloseButton) && (
-          <div className="flex items-center justify-between p-6 border-b border-white/10">
+          <div className="flex items-center justify-between p-6 border-b border-white/10 flex-shrink-0">
             {title && (
               <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
                 {title}
@@ -76,7 +80,7 @@ export function Modal({
         )}
 
         {/* Body */}
-        <div className="p-6 text-slate-700 dark:text-slate-200">
+        <div className="p-6 text-slate-700 dark:text-slate-200 overflow-y-auto flex-1">
           {children}
         </div>
       </div>

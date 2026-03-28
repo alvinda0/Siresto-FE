@@ -180,7 +180,7 @@ export const EXTERNAL_MENU_ITEMS: MenuItem[] = [
     title: "Produk",
     href: "/products",
     icon: Package,
-    roles: ["OWNER", "ADMIN"],
+    roles: ["OWNER", "ADMIN", "CASHIER", "KITCHEN", "WAITER"],
   },
 
   // === KATEGORI (CATEGORIES) ===
