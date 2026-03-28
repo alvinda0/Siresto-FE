@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuthMe } from "@/hooks/useAuthMe";
+import { useTheme } from "@/hooks/useTheme";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, Mail, Building2, Shield, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +9,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const ProfilePage = () => {
   const { data: user, isLoading } = useAuthMe();
+  const { 
+    sidebarPrimary,
+    sidebarHeaderPrimary,
+    sidebarPrimaryForeground,
+  } = useTheme();
 
   if (isLoading) {
     return (
@@ -32,14 +38,26 @@ const ProfilePage = () => {
   return (
     <div className="space-y-6">
       {/* Profile Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
-        <div className="flex items-center gap-4">
-          <div className="h-20 w-20 rounded-full bg-white/20 flex items-center justify-center">
+      <div 
+        className="relative overflow-hidden rounded-xl p-8 shadow-2xl"
+        style={{ 
+          backgroundColor: sidebarPrimary || '#1E293B',
+          color: sidebarPrimaryForeground || '#FFFFFF'
+        }}
+      >
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
+        
+        <div className="relative z-10 flex items-center gap-4">
+          <div 
+            className="h-20 w-20 rounded-full flex items-center justify-center"
+            style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}
+          >
             <User className="h-10 w-10" />
           </div>
           <div>
             <h1 className="text-3xl font-bold mb-1">{user.name}</h1>
-            <p className="text-blue-100">{user.role.display_name}</p>
+            <p className="opacity-80">{user.role.display_name}</p>
           </div>
         </div>
       </div>
