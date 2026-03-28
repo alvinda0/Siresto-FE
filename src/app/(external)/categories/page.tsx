@@ -210,7 +210,7 @@ const CategoriesPage = () => {
                 <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[100px]">Posisi</TableHead>
+                    <TableHead className="w-[100px] pl-6">Posisi</TableHead>
                     <TableHead className="min-w-[200px]">Nama Kategori</TableHead>
                     <TableHead className="min-w-[250px]">Deskripsi</TableHead>
                     <TableHead className="w-[120px]">Status</TableHead>
@@ -221,7 +221,7 @@ const CategoriesPage = () => {
                 <TableBody>
                   {filteredCategories.map((category) => (
                     <TableRow key={category.id}>
-                      <TableCell className="font-medium">
+                      <TableCell className="font-medium pl-6">
                         {category.position}
                       </TableCell>
                       <TableCell className="font-medium">
