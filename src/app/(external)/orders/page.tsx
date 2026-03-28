@@ -98,8 +98,6 @@ const OrdersListPage = () => {
     if (wsOrderIdFilter) params.append("order_id", wsOrderIdFilter);
     
     const wsUrl = backendUrl.replace(/^http/, "ws") + `/api/v1/ws/orders?${params.toString()}`;
-    
-    console.log("Connecting to WebSocket:", wsUrl);
 
     try {
       const ws = new WebSocket(wsUrl);
@@ -134,36 +132,29 @@ const OrdersListPage = () => {
         }
       };
 
-      ws.onerror = (error) => {
-        console.error("❌ WebSocket error:", error);
-        console.log("Make sure backend WebSocket server is running at:", wsUrl);
+      ws.onerror = () => {
+        // Silently handle WebSocket errors - backend might not be running
         setWsConnected(false);
       };
 
       ws.onclose = (event) => {
-        console.log("🔌 WebSocket disconnected", event.code, event.reason);
         setWsConnected(false);
         
-        // Auto reconnect after 5 seconds
-        if (event.code !== 1000) {
-          console.log("🔄 Attempting to reconnect in 5 seconds...");
-          setTimeout(() => {
-            if (wsRef.current?.readyState === WebSocket.CLOSED) {
-              window.location.reload();
-            }
-          }, 5000);
+        // Only attempt reconnect if it was an unexpected close
+        if (event.code !== 1000 && event.code !== 1001) {
+          // Don't reload, just stay disconnected
+          console.log("WebSocket disconnected - real-time updates unavailable");
         }
       };
 
       wsRef.current = ws;
     } catch (err) {
-      console.error("❌ Failed to create WebSocket connection:", err);
+      // Silently handle connection errors
       setWsConnected(false);
     }
 
     return () => {
       if (wsRef.current) {
-        console.log("Closing WebSocket connection");
         wsRef.current.close(1000, "Component unmounted");
       }
     };

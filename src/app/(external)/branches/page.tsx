@@ -96,27 +96,20 @@ const BranchesPage = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Branches</h1>
-          <p className="text-gray-600 mt-1">
-            Manage your company branches
-          </p>
-        </div>
-        {user.role.name === "OWNER" && (
-          <Button onClick={() => setIsCreateModalOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Branch
-          </Button>
-        )}
-      </div>
-
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Building2 className="h-5 w-5" />
-            Branches List
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <Building2 className="h-5 w-5" />
+              Branches ({branchResponse?.meta?.total_items || 0})
+            </CardTitle>
+            {user.role.name === "OWNER" && (
+              <Button onClick={() => setIsCreateModalOpen(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Branch
+              </Button>
+            )}
+          </div>
         </CardHeader>
         <CardContent className="p-0">
           {branches.length === 0 ? (
@@ -126,23 +119,23 @@ const BranchesPage = () => {
             </div>
           ) : (
             <>
-              <div className="rounded-md border-0">
+              <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Branch Name</TableHead>
-                      <TableHead>Company</TableHead>
-                      <TableHead>Address</TableHead>
-                      <TableHead>City</TableHead>
-                      <TableHead>Phone</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Created At</TableHead>
+                      <TableHead className="w-[200px] pl-6">Branch Name</TableHead>
+                      <TableHead className="w-[200px]">Company</TableHead>
+                      <TableHead className="w-[250px]">Address</TableHead>
+                      <TableHead className="w-[150px]">City</TableHead>
+                      <TableHead className="w-[120px]">Phone</TableHead>
+                      <TableHead className="w-[100px]">Status</TableHead>
+                      <TableHead className="w-[150px]">Created At</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {branches.map((branch) => (
                       <TableRow key={branch.id}>
-                        <TableCell className="font-medium">{branch.name}</TableCell>
+                        <TableCell className="pl-6 font-medium">{branch.name}</TableCell>
                         <TableCell>
                           {branch.company ? (
                             <div>
@@ -179,7 +172,7 @@ const BranchesPage = () => {
                             {branch.is_active ? "Active" : "Inactive"}
                           </Badge>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="text-xs text-gray-500">
                           {new Date(branch.created_at).toLocaleDateString("id-ID", {
                             year: "numeric",
                             month: "short",
@@ -196,7 +189,7 @@ const BranchesPage = () => {
               {branchResponse?.meta && (
                 <div className="flex items-center justify-between px-6 py-4 border-t">
                   <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <span>Rows per page:</span>
+                    <span>Baris per halaman:</span>
                     <Select
                       value={limit.toString()}
                       onValueChange={(value) => {
@@ -210,15 +203,16 @@ const BranchesPage = () => {
                       <SelectContent>
                         <SelectItem value="5">5</SelectItem>
                         <SelectItem value="10">10</SelectItem>
-                        <SelectItem value="20">20</SelectItem>
+                        <SelectItem value="25">25</SelectItem>
                         <SelectItem value="50">50</SelectItem>
+                        <SelectItem value="100">100</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="flex items-center gap-6">
                     <span className="text-sm text-gray-600">
-                      {((page - 1) * limit) + 1}-{Math.min(page * limit, branchResponse.meta.total_items)} of {branchResponse.meta.total_items}
+                      {((page - 1) * limit) + 1}-{Math.min(page * limit, branchResponse.meta.total_items)} dari {branchResponse.meta.total_items}
                     </span>
 
                     <div className="flex items-center gap-1">
@@ -245,7 +239,7 @@ const BranchesPage = () => {
                         size="icon"
                         className="h-8 w-8"
                         onClick={() => setPage(page + 1)}
-                        disabled={page === branchResponse.meta.total_pages}
+                        disabled={page === (branchResponse.meta?.total_pages || 1)}
                       >
                         <ChevronRight className="h-4 w-4" />
                       </Button>
@@ -253,8 +247,8 @@ const BranchesPage = () => {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8"
-                        onClick={() => setPage(branchResponse.meta.total_pages)}
-                        disabled={page === branchResponse.meta.total_pages}
+                        onClick={() => setPage(branchResponse.meta?.total_pages || 1)}
+                        disabled={page === (branchResponse.meta?.total_pages || 1)}
                       >
                         <ChevronsRight className="h-4 w-4" />
                       </Button>
