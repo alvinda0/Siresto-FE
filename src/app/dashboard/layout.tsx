@@ -6,7 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAuthMe } from "@/hooks/useAuthMe";
 import Header from "@/components/Header";
 import AppSidebar from "@/components/AppSidebar";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { getMenuItemByPath } from "@/constants/menuItems";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -19,6 +19,15 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const { data: user, isLoading, isError } = useAuthMe();
+  const [sidebarOpen, setSidebarOpen] = React.useState<boolean | undefined>(undefined);
+
+  // Read sidebar state from cookie on mount
+  useEffect(() => {
+    const cookies = document.cookie.split('; ');
+    const sidebarCookie = cookies.find(row => row.startsWith('sidebar_state='));
+    const savedState = sidebarCookie ? sidebarCookie.split('=')[1] === 'true' : true;
+    setSidebarOpen(savedState);
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -44,29 +53,27 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const { menuItem } = getMenuItemByPath(pathname);
   const activeMenuName = menuItem?.name || "Dashboard";
 
-  if (isLoading || isError || !user) {
+  if (isLoading || isError || !user || sidebarOpen === undefined) {
     return null;
   }
 
   return (
-    <SidebarProvider defaultOpen={true}>
-      <div className="relative w-full h-screen overflow-hidden bg-slate-50">
-        <div className="hidden lg:block fixed left-0 top-0 bottom-0 w-64 z-40 p-3">
-          <div className="h-full overflow-y-auto bg-white shadow-lg border border-gray-200/50">
-            <AppSidebar activeItem={activeMenuName} />
-          </div>
-        </div>
-
-        <div className="w-full h-full flex flex-col lg:pl-[300px]">
-          <div className="shrink-0 bg-white/80 backdrop-blur-lg border border-gray-200/50 shadow-sm">
-            <Header />
+    <SidebarProvider open={sidebarOpen} onOpenChange={setSidebarOpen}>
+      <AppSidebar activeItem={activeMenuName} />
+      <SidebarInset>
+        <div className="flex flex-col h-screen">
+          <div className="shrink-0 bg-white/80 backdrop-blur-lg border-b border-gray-200/50 shadow-sm">
+            <div className="flex items-center gap-2 px-4">
+              <SidebarTrigger className="lg:hidden" />
+              <Header />
+            </div>
           </div>
 
-          <main className="flex-1 overflow-y-auto">
+          <main className="flex-1 overflow-y-auto bg-slate-50">
             <div className="p-4 md:p-6 lg:p-8">{children}</div>
           </main>
         </div>
-      </div>
+      </SidebarInset>
     </SidebarProvider>
   );
 };

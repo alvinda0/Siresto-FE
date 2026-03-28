@@ -3,12 +3,18 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthMe } from '@/hooks/useAuthMe'
+import { useTheme } from '@/hooks/useTheme'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { UtensilsCrossed, Users, DollarSign, TrendingUp, Clock, CheckCircle } from "lucide-react"
 
 const HomePage = () => {
   const router = useRouter()
   const { data: user, isLoading } = useAuthMe()
+  const { 
+    sidebarPrimary,
+    sidebarHeaderPrimary,
+    sidebarPrimaryForeground,
+  } = useTheme()
 
   useEffect(() => {
     if (isLoading) return
@@ -38,13 +44,24 @@ const HomePage = () => {
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
-        <h1 className="text-3xl font-bold mb-2">
-          Selamat Datang, {user.name}!
-        </h1>
-        <p className="text-blue-100">
-          {user.company?.name} - {user.role.display_name}
-        </p>
+      <div 
+        className="relative overflow-hidden rounded-xl p-8 shadow-2xl"
+        style={{ 
+          backgroundColor: sidebarPrimary || '#1E293B',
+          color: sidebarPrimaryForeground || '#FFFFFF'
+        }}
+      >
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
+        
+        <div className="relative z-10">
+          <h1 className="text-3xl font-bold mb-2">
+            Selamat Datang, {user.name}!
+          </h1>
+          <p className="opacity-80">
+            {user.company?.name} - {user.role.display_name}
+          </p>
+        </div>
       </div>
 
       {/* Stats Cards */}

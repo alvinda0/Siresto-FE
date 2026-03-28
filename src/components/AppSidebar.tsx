@@ -11,6 +11,8 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { getFilteredMenuItems } from "@/constants/menuItems";
 import { ChevronDown } from "lucide-react";
@@ -27,6 +29,7 @@ const AppSidebar = ({ activeItem = "Dashboard" }: AppSidebarProps) => {
   const [openMenus, setOpenMenus] = useState<string[]>([]);
   const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
   const { data: user } = useAuthMe();
+  const { state } = useSidebar();
   const { 
     sidebarPrimary,
     sidebarForeground,
@@ -119,17 +122,19 @@ const AppSidebar = ({ activeItem = "Dashboard" }: AppSidebarProps) => {
 
   return (
     <Sidebar 
-      className="border-r bg-white" 
+      className="border-r bg-white"
+      collapsible="icon"
     >
       <SidebarHeader 
-        className="px-4 py-4 border-b"
+        className="border-b group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:py-3 px-4 py-4"
         style={{ 
           backgroundColor: sidebarHeaderPrimary,
         }}
       >
-        <div className="flex items-center gap-2.5 pl-2">
+        {/* Expanded state */}
+        <div className="flex items-center gap-2.5 group-data-[collapsible=icon]:hidden">
           <div
-            className="h-9 w-9 rounded-lg flex items-center justify-center"
+            className="h-9 w-9 rounded-lg flex items-center justify-center flex-shrink-0"
             style={{ backgroundColor: sidebarHeaderForeground }}
           >
             <span className="font-bold text-base" style={{ color: sidebarHeaderPrimary }}>S</span>
@@ -140,6 +145,20 @@ const AppSidebar = ({ activeItem = "Dashboard" }: AppSidebarProps) => {
           >
             Siresto
           </h2>
+          <div className="ml-auto">
+            <SidebarTrigger />
+          </div>
+        </div>
+
+        {/* Collapsed state */}
+        <div className="hidden group-data-[collapsible=icon]:flex flex-col items-center gap-2">
+          <div
+            className="h-8 w-8 rounded-lg flex items-center justify-center"
+            style={{ backgroundColor: sidebarHeaderForeground }}
+          >
+            <span className="font-bold text-sm" style={{ color: sidebarHeaderPrimary }}>S</span>
+          </div>
+          <SidebarTrigger className="h-6 w-6" />
         </div>
       </SidebarHeader>
 
@@ -161,6 +180,7 @@ const AppSidebar = ({ activeItem = "Dashboard" }: AppSidebarProps) => {
                       onMouseLeave={() => setHoveredMenu(null)}
                       className="flex items-center gap-3 px-3 py-2 rounded-lg transition-all"
                       style={getMenuStyle(isActive || isMenuOpen, menuKey)}
+                      tooltip={state === "collapsed" ? item.title : undefined}
                     >
                       <item.icon 
                         className="h-5 w-5 flex-shrink-0"
@@ -217,6 +237,7 @@ const AppSidebar = ({ activeItem = "Dashboard" }: AppSidebarProps) => {
                     onMouseEnter={() => setHoveredMenu(menuKey)}
                     onMouseLeave={() => setHoveredMenu(null)}
                     style={getMenuStyle(isActive, menuKey)}
+                    tooltip={state === "collapsed" ? item.title : undefined}
                   >
                     <a href={item.href} className="flex items-center gap-3 w-full">
                       <item.icon 
