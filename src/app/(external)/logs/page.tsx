@@ -1,4 +1,4 @@
-// app/(internal)/audit/page.tsx
+// app/(external)/logs/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -12,10 +12,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import AuditLogDetailModal from "@/components/audit/AuditLogDetailModal";
-import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const InternalAuditPage = () => {
+const ExternalLogsPage = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
@@ -137,8 +136,8 @@ const InternalAuditPage = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Audit Log</h1>
-        <p className="text-gray-500 mt-1">Track all system activities and changes</p>
+        <h1 className="text-3xl font-bold text-gray-900">Activity Logs</h1>
+        <p className="text-gray-500 mt-1">Track all your system activities</p>
       </div>
 
       {/* Stats Cards */}
@@ -212,10 +211,10 @@ const InternalAuditPage = () => {
         </CardContent>
       </Card>
 
-      {/* Audit Log Table */}
+      {/* Activity Log Table */}
       <CustomDataTable
-        title="Audit Logs"
-        description="View all system activity logs"
+        title="Activity Logs"
+        description="View all your system activity logs"
         columns={columns}
         data={data?.data || []}
         progressPending={isLoading}
@@ -241,4 +240,4 @@ const InternalAuditPage = () => {
   );
 };
 
-export default InternalAuditPage;
+export default ExternalLogsPage;

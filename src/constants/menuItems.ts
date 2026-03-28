@@ -95,7 +95,7 @@ export const INTERNAL_MENU_ITEMS: MenuItem[] = [
     title: "Audit Log",
     href: "/audit",
     icon: BookDashed,
-    roles: ["SUPER_ADMIN"],
+    roles: ["SUPER_ADMIN", "SUPPORT", "FINANCE"],
   },
 
   // === SETTINGS ===
@@ -207,6 +207,15 @@ export const EXTERNAL_MENU_ITEMS: MenuItem[] = [
     title: "Toko",
     href: "/store",
     icon: ShoppingBag,
+    roles: ["OWNER", "ADMIN"],
+  },
+
+  // === ACTIVITY LOGS ===
+  {
+    name: "logs",
+    title: "Activity Logs",
+    href: "/logs",
+    icon: BookDashed,
     roles: ["OWNER", "ADMIN"],
   },
 ];
