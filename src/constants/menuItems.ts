@@ -159,19 +159,19 @@ export const EXTERNAL_MENU_ITEMS: MenuItem[] = [
   // === ORDER ===
   {
     name: "orders",
-    title: "Order",
+    title: "Daftar Order",
     href: "/orders",
     icon: ShoppingCart,
-    roles: ["OWNER", "ADMIN", "CASHIER", "WAITER"],
+    roles: ["OWNER", "ADMIN", "CASHIER", "WAITER", "KITCHEN"],
   },
 
   // === CREATE ORDER ===
   {
     name: "create-order",
-    title: "Create Order",
+    title: "Buat Order",
     href: "/orders/create",
     icon: PlusCircle,
-    roles: ["CASHIER", "WAITER"],
+    roles: ["OWNER", "ADMIN", "CASHIER", "WAITER"],
   },
 
   // === PRODUK (PRODUCTS) ===
