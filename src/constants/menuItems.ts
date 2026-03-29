@@ -192,6 +192,15 @@ export const EXTERNAL_MENU_ITEMS: MenuItem[] = [
     roles: ["OWNER", "ADMIN", "CASHIER", "KITCHEN", "WAITER"],
   },
 
+  // === PAJAK (TAXES) ===
+  {
+    name: "taxes",
+    title: "Pajak",
+    href: "/taxes",
+    icon: HandCoins,
+    roles: ["OWNER", "ADMIN"],
+  },
+
   // === WASTE ===
   {
     name: "waste",
