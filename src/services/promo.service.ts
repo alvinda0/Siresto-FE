@@ -10,13 +10,14 @@ export interface Promo {
   branch_name: string | null;
   name: string;
   code: string;
+  promo_category: string;
   type: 'percentage' | 'fixed';
   value: number;
   max_discount: number | null;
-  min_transaction: number;
-  quota: number;
-  used_count: number;
-  remaining_quota: number;
+  min_transaction?: number;
+  quota?: number;
+  used_count?: number;
+  remaining_quota?: number;
   start_date: string;
   end_date: string;
   is_active: boolean;
@@ -24,6 +25,13 @@ export interface Promo {
   is_available: boolean;
   created_at: string;
   updated_at: string;
+  // For product promo
+  product_ids?: string[];
+  // For bundle promo
+  bundle_items?: Array<{
+    product_id: string;
+    quantity: number;
+  }>;
 }
 
 export interface PromoResponse {
@@ -43,15 +51,23 @@ export interface PromoResponse {
 export interface CreatePromoRequest {
   name: string;
   code: string;
+  promo_category: 'normal' | 'product' | 'bundle';
   type: 'percentage' | 'fixed';
   value: number;
   max_discount?: number | null;
-  min_transaction: number;
-  quota: number;
+  min_transaction?: number;
+  quota?: number;
   start_date: string;
   end_date: string;
   branch_id?: string | null;
   is_active: boolean;
+  // For product promo
+  product_ids?: string[];
+  // For bundle promo
+  bundle_items?: Array<{
+    product_id: string;
+    quantity: number;
+  }>;
 }
 
 export interface UpdatePromoRequest extends CreatePromoRequest {}
@@ -64,6 +80,16 @@ class PromoService {
     const { data } = await apiClient.get<PromoResponse>(
       `/api/v1/external/promos`,
       { params }
+    );
+    return data;
+  }
+
+  /**
+   * Get a single promo by ID
+   */
+  async getPromoById(id: string): Promise<{ data: Promo }> {
+    const { data } = await apiClient.get<{ data: Promo }>(
+      `/api/v1/external/promos/${id}`
     );
     return data;
   }

@@ -30,6 +30,7 @@ import { ErrorState } from '@/components/ErrorState';
 import { CreatePromoModal } from '../../../components/promo/CreatePromoModal';
 import { EditPromoModal } from '../../../components/promo/EditPromoModal';
 import { DeletePromoModal } from '../../../components/promo/DeletePromoModal';
+import { PromoDetailModal } from '../../../components/promo/PromoDetailModal';
 
 export default function PromosPage() {
   const router = useRouter();
@@ -39,6 +40,7 @@ export default function PromosPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingPromo, setEditingPromo] = useState<Promo | null>(null);
   const [deletingPromo, setDeletingPromo] = useState<Promo | null>(null);
+  const [viewingPromoId, setViewingPromoId] = useState<string | null>(null);
 
   // Get promos using React Query
   const {
@@ -136,13 +138,14 @@ export default function PromosPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="min-w-[200px] pl-6">Nama Promo</TableHead>
+                      <TableHead className="w-[100px]">Kategori</TableHead>
                       <TableHead className="min-w-[150px]">Perusahaan/Cabang</TableHead>
                       <TableHead className="w-[120px]">Diskon</TableHead>
                       <TableHead className="w-[120px]">Min. Transaksi</TableHead>
                       <TableHead className="w-[100px]">Kuota</TableHead>
                       <TableHead className="min-w-[150px]">Periode</TableHead>
                       <TableHead className="w-[120px]">Status</TableHead>
-                      <TableHead className="w-[150px]">Aksi</TableHead>
+                      <TableHead className="w-[200px]">Aksi</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -151,6 +154,15 @@ export default function PromosPage() {
                         <TableCell className="pl-6">
                           <div className="font-medium">{promo.name}</div>
                           <div className="text-sm text-gray-500">{promo.code}</div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={
+                            promo.promo_category === 'normal' ? 'default' :
+                            promo.promo_category === 'product' ? 'secondary' : 'outline'
+                          }>
+                            {promo.promo_category === 'normal' ? 'Normal' :
+                             promo.promo_category === 'product' ? 'Produk' : 'Bundle'}
+                          </Badge>
                         </TableCell>
                         <TableCell>
                           <div>{promo.company_name}</div>
@@ -174,10 +186,16 @@ export default function PromosPage() {
                             </div>
                           )}
                         </TableCell>
-                        <TableCell>Rp {promo.min_transaction.toLocaleString()}</TableCell>
+                        <TableCell>Rp {promo.min_transaction?.toLocaleString() || '-'}</TableCell>
                         <TableCell>
-                          <div className="font-medium">{promo.remaining_quota} / {promo.quota}</div>
-                          <div className="text-sm text-gray-500">Terpakai: {promo.used_count}</div>
+                          {promo.quota ? (
+                            <>
+                              <div className="font-medium">{promo.remaining_quota ?? 0} / {promo.quota}</div>
+                              <div className="text-sm text-gray-500">Terpakai: {promo.used_count ?? 0}</div>
+                            </>
+                          ) : (
+                            <span className="text-gray-400">-</span>
+                          )}
                         </TableCell>
                         <TableCell>
                           <div className="text-sm">
@@ -194,6 +212,13 @@ export default function PromosPage() {
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setViewingPromoId(promo.id)}
+                            >
+                              Detail
+                            </Button>
                             <Button
                               variant="outline"
                               size="sm"
@@ -322,6 +347,14 @@ export default function PromosPage() {
             setDeletingPromo(null);
             refetch();
           }}
+        />
+      )}
+
+      {viewingPromoId && (
+        <PromoDetailModal
+          isOpen={!!viewingPromoId}
+          promoId={viewingPromoId}
+          onClose={() => setViewingPromoId(null)}
         />
       )}
     </div>
