@@ -17,6 +17,17 @@ export interface TaxDetail {
   tax_amount: number;
 }
 
+export interface PromoDetail {
+  promo_id: string;
+  promo_name: string;
+  promo_code: string;
+  promo_type: 'percentage' | 'fixed';
+  promo_value: number;
+  discount_amount: number;
+  max_discount: number | null;
+  min_transaction: number;
+}
+
 export interface CreateOrderPayload {
   customer_name?: string;
   customer_phone?: string;
@@ -39,6 +50,9 @@ export interface Order {
   referral_code?: string;
   order_method: OrderMethod;
   promo_code?: string;
+  promo_id?: string;
+  discount_amount?: number;
+  promo_details?: PromoDetail;
   subtotal_amount: number;
   tax_amount: number;
   total_amount: number;

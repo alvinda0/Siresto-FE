@@ -148,6 +148,25 @@ const OrderDetailModal = ({ isOpen, onClose, orderId }: OrderDetailModalProps) =
                     <p className="font-medium">{formatCurrency(order.subtotal_amount)}</p>
                   </div>
 
+                  {/* Promo/Discount */}
+                  {order.promo_details && order.discount_amount && order.discount_amount > 0 && (
+                    <div className="flex justify-between items-center text-sm">
+                      <div>
+                        <p className="text-green-600 font-medium">
+                          Diskon - {order.promo_details.promo_name}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {order.promo_details.promo_type === 'percentage' 
+                            ? `${order.promo_details.promo_value}%` 
+                            : `Rp ${order.promo_details.promo_value.toLocaleString()}`}
+                        </p>
+                      </div>
+                      <p className="font-medium text-green-600">
+                        -{formatCurrency(order.discount_amount)}
+                      </p>
+                    </div>
+                  )}
+
                   {/* Tax Details */}
                   {order.tax_details && order.tax_details.length > 0 && (
                     <>
@@ -191,7 +210,29 @@ const OrderDetailModal = ({ isOpen, onClose, orderId }: OrderDetailModalProps) =
                       <Separator />
                       <div>
                         <p className="text-sm text-gray-500">Kode Promo</p>
-                        <p className="font-medium font-mono">{order.promo_code}</p>
+                        <div className="mt-1">
+                          <p className="font-medium font-mono">{order.promo_code}</p>
+                          {order.promo_details && (
+                            <div className="mt-2 p-2 bg-green-50 rounded border border-green-200">
+                              <p className="text-sm font-medium text-green-800">
+                                {order.promo_details.promo_name}
+                              </p>
+                              <p className="text-xs text-green-600 mt-1">
+                                Diskon: {order.promo_details.promo_type === 'percentage' 
+                                  ? `${order.promo_details.promo_value}%` 
+                                  : formatCurrency(order.promo_details.promo_value)}
+                              </p>
+                              {order.promo_details.max_discount && (
+                                <p className="text-xs text-gray-600">
+                                  Max: {formatCurrency(order.promo_details.max_discount)}
+                                </p>
+                              )}
+                              <p className="text-xs text-gray-600">
+                                Min. Transaksi: {formatCurrency(order.promo_details.min_transaction)}
+                              </p>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </>
                   )}
