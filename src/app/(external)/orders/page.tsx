@@ -16,11 +16,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ShoppingCart, Plus, RefreshCw, Filter, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { ShoppingCart, Plus, RefreshCw, Filter, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Trash2 } from "lucide-react";
 import LoadingState from "@/components/LoadingState";
 import { ErrorState } from "@/components/ErrorState";
 import { Order, WebSocketOrderMessage } from "@/types/order";
 import OrderDetailModal from "@/components/order/OrderDetailModal";
+import { DeleteOrderModal } from "@/components/order/DeleteOrderModal";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -32,6 +33,8 @@ const OrdersListPage = () => {
   const wsRef = useRef<WebSocket | null>(null);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [deletingOrderId, setDeletingOrderId] = useState<string | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   
   // WebSocket Filters
   const [wsStatusFilter, setWsStatusFilter] = useState<string>("");
@@ -482,16 +485,28 @@ const OrdersListPage = () => {
                           {formatDate(order.created_at)}
                         </TableCell>
                         <TableCell>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedOrderId(order.id);
-                              setIsDetailModalOpen(true);
-                            }}
-                          >
-                            Detail
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setSelectedOrderId(order.id);
+                                setIsDetailModalOpen(true);
+                              }}
+                            >
+                              Detail
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => {
+                                setDeletingOrderId(order.id);
+                                setIsDeleteModalOpen(true);
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -583,6 +598,20 @@ const OrdersListPage = () => {
           setSelectedOrderId(null);
         }}
         orderId={selectedOrderId}
+      />
+
+      {/* Delete Order Modal */}
+      <DeleteOrderModal
+        isOpen={isDeleteModalOpen}
+        orderId={deletingOrderId}
+        orderNumber={orders.find(o => o.id === deletingOrderId)?.id.substring(0, 8)}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setDeletingOrderId(null);
+        }}
+        onSuccess={() => {
+          refetch();
+        }}
       />
     </div>
   );

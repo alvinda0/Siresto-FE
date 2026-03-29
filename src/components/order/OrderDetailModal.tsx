@@ -85,7 +85,7 @@ const OrderDetailModal = ({ isOpen, onClose, orderId }: OrderDetailModalProps) =
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-[95vw] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Detail Order</DialogTitle>
           {order && (
@@ -142,6 +142,28 @@ const OrderDetailModal = ({ isOpen, onClose, orderId }: OrderDetailModalProps) =
 
                   <Separator className="my-4" />
 
+                  {/* Subtotal */}
+                  <div className="flex justify-between items-center text-sm">
+                    <p className="text-gray-600">Subtotal</p>
+                    <p className="font-medium">{formatCurrency(order.subtotal_amount)}</p>
+                  </div>
+
+                  {/* Tax Details */}
+                  {order.tax_details && order.tax_details.length > 0 && (
+                    <>
+                      {order.tax_details.map((tax, index) => (
+                        <div key={index} className="flex justify-between items-center text-sm">
+                          <p className="text-gray-600">
+                            {tax.tax_name} ({tax.percentage}%)
+                          </p>
+                          <p className="font-medium">{formatCurrency(tax.tax_amount)}</p>
+                        </div>
+                      ))}
+                      <Separator className="my-2" />
+                    </>
+                  )}
+
+                  {/* Total */}
                   <div className="flex justify-between items-center">
                     <p className="text-lg font-bold">Total</p>
                     <p className="text-2xl font-bold text-green-600">

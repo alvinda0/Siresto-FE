@@ -42,6 +42,16 @@ class OrderService {
     );
     return data;
   }
+
+  /**
+   * Delete order
+   */
+  async deleteOrder(orderId: string): Promise<{ message: string }> {
+    const { data } = await apiClient.delete<{ message: string }>(
+      `/api/v1/external/orders/${orderId}`
+    );
+    return data;
+  }
 }
 
 export const orderService = new OrderService();

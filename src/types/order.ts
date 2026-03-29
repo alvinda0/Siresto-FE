@@ -8,6 +8,15 @@ export interface OrderItem {
   note?: string;
 }
 
+export interface TaxDetail {
+  tax_id: string;
+  tax_name: string;
+  percentage: number;
+  priority: number;
+  base_amount: number;
+  tax_amount: number;
+}
+
 export interface CreateOrderPayload {
   customer_name?: string;
   customer_phone?: string;
@@ -30,11 +39,14 @@ export interface Order {
   referral_code?: string;
   order_method: OrderMethod;
   promo_code?: string;
+  subtotal_amount: number;
+  tax_amount: number;
   total_amount: number;
   status: string;
   created_at: string;
   updated_at: string;
   order_items: OrderItemDetail[];
+  tax_details?: TaxDetail[];
 }
 
 export interface OrderItemDetail {
