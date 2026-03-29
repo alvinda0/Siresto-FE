@@ -8,6 +8,9 @@ import { companyService } from "@/services/company.service";
 import { productService } from "@/services/product.service";
 import { categoryService } from "@/services/category.service";
 import { orderService } from "@/services/order.service";
+import { promoService, Promo } from "@/services/promo.service";
+import { taxService } from "@/services/tax.service";
+import { Tax } from "@/types/tax";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +40,8 @@ const OrdersPage = () => {
   const [orderMethod, setOrderMethod] = useState<OrderMethod>("DINE_IN");
   const [promoCode, setPromoCode] = useState("");
   const [referralCode, setReferralCode] = useState("");
+  const [appliedPromo, setAppliedPromo] = useState<Promo | null>(null);
+  const [isValidatingPromo, setIsValidatingPromo] = useState(false);
 
   // Get company
   const { data: companies } = useQuery({
@@ -74,6 +79,13 @@ const OrdersPage = () => {
       
       return productService.getProducts(params);
     },
+    enabled: !!user,
+  });
+
+  // Get taxes
+  const { data: taxResponse } = useQuery({
+    queryKey: ["taxes"],
+    queryFn: () => taxService.getTaxes({ page: 1, limit: 100 }),
     enabled: !!user,
   });
 
@@ -120,6 +132,38 @@ const OrdersPage = () => {
     setOrderMethod("DINE_IN");
     setPromoCode("");
     setReferralCode("");
+    setAppliedPromo(null);
+  };
+
+  const handleValidatePromo = async () => {
+    if (!promoCode.trim()) {
+      toast.error("Masukkan kode promo terlebih dahulu");
+      return;
+    }
+
+    setIsValidatingPromo(true);
+    try {
+      const result = await promoService.validatePromo(promoCode);
+      
+      if (result.valid && result.promo) {
+        setAppliedPromo(result.promo);
+        toast.success(result.message || "Promo berhasil diterapkan");
+      } else {
+        setAppliedPromo(null);
+        toast.error(result.message || "Kode promo tidak valid");
+      }
+    } catch (error: any) {
+      setAppliedPromo(null);
+      toast.error(error?.response?.data?.message || "Gagal memvalidasi promo");
+    } finally {
+      setIsValidatingPromo(false);
+    }
+  };
+
+  const removePromo = () => {
+    setAppliedPromo(null);
+    setPromoCode("");
+    toast.info("Promo dihapus");
   };
 
   const addToCart = (product: Product) => {
@@ -160,8 +204,56 @@ const OrdersPage = () => {
     setCart(cart.filter(item => item.product.id !== productId));
   };
 
-  const calculateTotal = () => {
+  const calculateSubtotal = () => {
     return cart.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+  };
+
+  const calculatePromoDiscount = () => {
+    if (!appliedPromo) return 0;
+
+    const subtotal = calculateSubtotal();
+    
+    if (appliedPromo.type === "percentage") {
+      const discount = (subtotal * appliedPromo.value) / 100;
+      return appliedPromo.max_discount 
+        ? Math.min(discount, appliedPromo.max_discount)
+        : discount;
+    } else {
+      return appliedPromo.value;
+    }
+  };
+
+  const getActiveTaxes = (): Tax[] => {
+    if (!taxResponse?.data) return [];
+    return taxResponse.data
+      .filter(tax => tax.status === "active")
+      .sort((a, b) => a.prioritas - b.prioritas);
+  };
+
+  const calculateTaxes = () => {
+    const taxes = getActiveTaxes();
+    const subtotal = calculateSubtotal();
+    const discount = calculatePromoDiscount();
+    const subtotalAfterDiscount = Math.max(0, subtotal - discount);
+
+    let runningTotal = subtotalAfterDiscount;
+    const taxBreakdown: { tax: Tax; amount: number }[] = [];
+
+    taxes.forEach(tax => {
+      const taxAmount = (runningTotal * tax.presentase) / 100;
+      taxBreakdown.push({ tax, amount: taxAmount });
+      runningTotal += taxAmount;
+    });
+
+    return { taxBreakdown, totalTax: runningTotal - subtotalAfterDiscount };
+  };
+
+  const calculateTotal = () => {
+    const subtotal = calculateSubtotal();
+    const discount = calculatePromoDiscount();
+    const subtotalAfterDiscount = Math.max(0, subtotal - discount);
+    const { totalTax } = calculateTaxes();
+    return subtotalAfterDiscount + totalTax;
   };
 
   const handleSubmit = () => {
@@ -408,14 +500,50 @@ const OrdersPage = () => {
 
                 <div>
                   <label className="text-xs font-medium text-gray-700">Kode Promo</label>
-                  <div className="flex gap-2 mt-1">
-                    <Input
-                      placeholder="Kode Promo"
-                      value={promoCode}
-                      onChange={(e) => setPromoCode(e.target.value)}
-                    />
-                    <Button size="sm" variant="outline">Pakai</Button>
-                  </div>
+                  {appliedPromo ? (
+                    <div className="mt-1 p-2 border rounded-lg bg-green-50 border-green-200">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="font-medium text-sm text-green-700">{appliedPromo.name}</div>
+                          <div className="text-xs text-green-600">
+                            {appliedPromo.type === "percentage" 
+                              ? `Diskon ${appliedPromo.value}%${appliedPromo.max_discount ? ` (max ${formatCurrency(appliedPromo.max_discount)})` : ''}`
+                              : `Diskon ${formatCurrency(appliedPromo.value)}`
+                            }
+                          </div>
+                        </div>
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={removePromo}
+                          className="h-6 px-2 text-red-500 hover:text-red-700"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2 mt-1">
+                      <Input
+                        placeholder="Kode Promo"
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleValidatePromo();
+                          }
+                        }}
+                      />
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={handleValidatePromo}
+                        disabled={isValidatingPromo || !promoCode.trim()}
+                      >
+                        {isValidatingPromo ? "..." : "Pakai"}
+                      </Button>
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -454,16 +582,20 @@ const OrdersPage = () => {
               <div className="border-t pt-3 mt-3 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span>Subtotal</span>
-                  <span>{formatCurrency(calculateTotal())}</span>
+                  <span>{formatCurrency(calculateSubtotal())}</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span>Service (5%)</span>
-                  <span>Rp0</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>PB1 (10%)</span>
-                  <span>Rp0</span>
-                </div>
+                {appliedPromo && (
+                  <div className="flex justify-between text-sm text-green-600">
+                    <span>Diskon Promo</span>
+                    <span>-{formatCurrency(calculatePromoDiscount())}</span>
+                  </div>
+                )}
+                {calculateTaxes().taxBreakdown.map(({ tax, amount }) => (
+                  <div key={tax.id} className="flex justify-between text-sm">
+                    <span>{tax.nama_pajak} ({tax.presentase}%)</span>
+                    <span>{formatCurrency(amount)}</span>
+                  </div>
+                ))}
                 <div className="flex justify-between font-bold text-base border-t pt-2">
                   <span>Total</span>
                   <span>{formatCurrency(calculateTotal())}</span>

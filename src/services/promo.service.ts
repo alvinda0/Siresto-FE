@@ -125,6 +125,26 @@ class PromoService {
     );
     return data;
   }
+
+  /**
+   * Validate a promo code
+   */
+  async validatePromo(code: string): Promise<{
+    valid: boolean;
+    message: string;
+    promo: Promo | null;
+  }> {
+    const { data } = await apiClient.get<{
+      success: boolean;
+      message: string;
+      data: {
+        valid: boolean;
+        message: string;
+        promo: Promo;
+      };
+    }>(`/api/v1/external/promos/validate/${code}`);
+    return data.data;
+  }
 }
 
 export const promoService = new PromoService();
