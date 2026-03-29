@@ -201,6 +201,15 @@ export const EXTERNAL_MENU_ITEMS: MenuItem[] = [
     roles: ["OWNER", "ADMIN"],
   },
 
+  // === PROMO ===
+  {
+    name: "promos",
+    title: "Promo",
+    href: "/promos",
+    icon: DollarSign,
+    roles: ["OWNER", "ADMIN"],
+  },
+
   // === WASTE ===
   {
     name: "waste",
