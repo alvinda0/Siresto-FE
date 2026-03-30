@@ -44,6 +44,17 @@ class OrderService {
   }
 
   /**
+   * Update order
+   */
+  async updateOrder(orderId: string, payload: CreateOrderPayload): Promise<Order> {
+    const { data } = await apiClient.put<OrderResponse>(
+      `/api/v1/external/orders/${orderId}`,
+      payload
+    );
+    return data.data;
+  }
+
+  /**
    * Delete order
    */
   async deleteOrder(orderId: string): Promise<{ message: string }> {

@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ShoppingCart, Plus, RefreshCw, Filter, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Trash2, Edit, Eye, CreditCard } from "lucide-react";
+import { ShoppingCart, Plus, RefreshCw, Filter, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Trash2, Edit, Eye, CreditCard, FileEdit } from "lucide-react";
 import LoadingState from "@/components/LoadingState";
 import { ErrorState } from "@/components/ErrorState";
 import { Order, WebSocketOrderMessage } from "@/types/order";
@@ -523,19 +523,31 @@ const OrdersListPage = () => {
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
-                            {order.status !== "PROCESSING" && order.status !== "COMPLETED" && (
-                              <Button
-                                variant="secondary"
-                                size="sm"
-                                onClick={() => {
-                                  setUpdatingOrderId(order.id);
-                                  setUpdatingOrderStatus(order.status);
-                                  setIsUpdateStatusModalOpen(true);
-                                }}
-                                title="Update Status ke Processing"
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
+                            {order.status !== "PROCESSING" && order.status !== "COMPLETED" && order.status !== "CANCELLED" && (
+                              <>
+                                <Button
+                                  variant="default"
+                                  size="sm"
+                                  onClick={() => router.push(`/orders/${order.id}/edit`)}
+                                  title="Edit Order"
+                                  className="bg-blue-600 hover:bg-blue-700"
+                                >
+                                  <FileEdit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="default"
+                                  size="sm"
+                                  onClick={() => {
+                                    setUpdatingOrderId(order.id);
+                                    setUpdatingOrderStatus(order.status);
+                                    setIsUpdateStatusModalOpen(true);
+                                  }}
+                                  title="Update Status ke Processing"
+                                  className="bg-orange-600 hover:bg-orange-700"
+                                >
+                                  <RefreshCw className="h-4 w-4" />
+                                </Button>
+                              </>
                             )}
                             {order.status === "PROCESSING" && (
                               <>
