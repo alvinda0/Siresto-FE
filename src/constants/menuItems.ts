@@ -210,6 +210,15 @@ export const EXTERNAL_MENU_ITEMS: MenuItem[] = [
     roles: ["OWNER", "ADMIN"],
   },
 
+  // === TRANSACTIONS ===
+  {
+    name: "transactions",
+    title: "Laporan Transaksi",
+    href: "/transactions",
+    icon: FileText,
+    roles: ["OWNER", "ADMIN"],
+  },
+
   // === ACTIVITY LOGS ===
   {
     name: "logs",
