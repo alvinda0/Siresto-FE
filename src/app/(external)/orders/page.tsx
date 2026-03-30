@@ -497,6 +497,13 @@ const OrdersListPage = () => {
                               Detail
                             </Button>
                             <Button
+                              variant="default"
+                              size="sm"
+                              onClick={() => router.push(`/orders/${order.id}/quick-add`)}
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                            <Button
                               variant="destructive"
                               size="sm"
                               onClick={() => {

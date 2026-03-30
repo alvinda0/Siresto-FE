@@ -52,6 +52,21 @@ class OrderService {
     );
     return data;
   }
+
+  /**
+   * Quick add item to existing order
+   */
+  async quickAddItem(orderId: string, payload: {
+    product_id: string;
+    quantity: number;
+    note?: string;
+  }): Promise<Order> {
+    const { data } = await apiClient.post<OrderResponse>(
+      `/api/v1/external/orders/quick/${orderId}`,
+      payload
+    );
+    return data.data;
+  }
 }
 
 export const orderService = new OrderService();
