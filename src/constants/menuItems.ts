@@ -210,24 +210,6 @@ export const EXTERNAL_MENU_ITEMS: MenuItem[] = [
     roles: ["OWNER", "ADMIN"],
   },
 
-  // === WASTE ===
-  {
-    name: "waste",
-    title: "Waste",
-    href: "/waste",
-    icon: Trash2,
-    roles: ["OWNER", "ADMIN", "KITCHEN"],
-  },
-
-  // === TOKO (STORE SETTINGS) ===
-  {
-    name: "store",
-    title: "Toko",
-    href: "/store",
-    icon: ShoppingBag,
-    roles: ["OWNER", "ADMIN"],
-  },
-
   // === ACTIVITY LOGS ===
   {
     name: "logs",
