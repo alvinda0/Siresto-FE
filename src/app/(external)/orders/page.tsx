@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ShoppingCart, Plus, RefreshCw, Filter, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Trash2, Edit, Eye } from "lucide-react";
+import { ShoppingCart, Plus, RefreshCw, Filter, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Trash2, Edit, Eye, CreditCard } from "lucide-react";
 import LoadingState from "@/components/LoadingState";
 import { ErrorState } from "@/components/ErrorState";
 import { Order, WebSocketOrderMessage } from "@/types/order";
@@ -24,6 +24,7 @@ import OrderDetailModal from "@/components/order/OrderDetailModal";
 import { DeleteOrderModal } from "@/components/order/DeleteOrderModal";
 import { UpdateOrderStatusModal } from "@/components/order/UpdateOrderStatusModal";
 import { OrderItemsModal } from "@/components/order/OrderItemsModal";
+import { PaymentModal } from "@/components/order/PaymentModal";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -43,6 +44,8 @@ const OrdersListPage = () => {
   const [viewItemsOrderId, setViewItemsOrderId] = useState<string | null>(null);
   const [viewItemsOrder, setViewItemsOrder] = useState<Order | null>(null);
   const [isItemsModalOpen, setIsItemsModalOpen] = useState(false);
+  const [paymentOrder, setPaymentOrder] = useState<Order | null>(null);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   
   // WebSocket Filters
   const [wsStatusFilter, setWsStatusFilter] = useState<string>("");
@@ -232,6 +235,16 @@ const OrdersListPage = () => {
     };
 
     const statusInfo = statusMap[status] || { variant: "secondary", label: status };
+    
+    // Custom styling for COMPLETED status
+    if (status === "COMPLETED") {
+      return (
+        <Badge className="bg-green-600 hover:bg-green-700 text-white">
+          {statusInfo.label}
+        </Badge>
+      );
+    }
+    
     return (
       <Badge variant={statusInfo.variant}>
         {statusInfo.label}
@@ -444,6 +457,7 @@ const OrdersListPage = () => {
                       <TableHead className="w-[120px]">Metode</TableHead>
                       <TableHead className="w-[200px]">Items</TableHead>
                       <TableHead className="w-[120px]">Total</TableHead>
+                      <TableHead className="w-[120px]">Pembayaran</TableHead>
                       <TableHead className="w-[100px]">Status</TableHead>
                       <TableHead className="w-[150px]">Waktu</TableHead>
                       <TableHead className="w-[100px]">Aksi</TableHead>
@@ -488,6 +502,9 @@ const OrdersListPage = () => {
                           {formatCurrency(order.total_amount)}
                         </TableCell>
                         <TableCell>
+                          {order.payment_method || "-"}
+                        </TableCell>
+                        <TableCell>
                           {getStatusBadge(order.status)}
                         </TableCell>
                         <TableCell className="text-xs text-gray-500">
@@ -506,7 +523,7 @@ const OrdersListPage = () => {
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
-                            {order.status !== "PROCESSING" && (
+                            {order.status !== "PROCESSING" && order.status !== "COMPLETED" && (
                               <Button
                                 variant="secondary"
                                 size="sm"
@@ -521,14 +538,28 @@ const OrdersListPage = () => {
                               </Button>
                             )}
                             {order.status === "PROCESSING" && (
-                              <Button
-                                variant="default"
-                                size="sm"
-                                onClick={() => router.push(`/orders/${order.id}/quick-add`)}
-                                title="Tambah Pesanan"
-                              >
-                                <Plus className="h-4 w-4" />
-                              </Button>
+                              <>
+                                <Button
+                                  variant="default"
+                                  size="sm"
+                                  onClick={() => router.push(`/orders/${order.id}/quick-add`)}
+                                  title="Tambah Pesanan"
+                                >
+                                  <Plus className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="default"
+                                  size="sm"
+                                  onClick={() => {
+                                    setPaymentOrder(order);
+                                    setIsPaymentModalOpen(true);
+                                  }}
+                                  title="Proses Pembayaran"
+                                  className="bg-green-600 hover:bg-green-700"
+                                >
+                                  <CreditCard className="h-4 w-4" />
+                                </Button>
+                              </>
                             )}
                             <Button
                               variant="destructive"
@@ -674,6 +705,19 @@ const OrdersListPage = () => {
         }}
         items={viewItemsOrder?.order_items || []}
         orderId={viewItemsOrderId || ""}
+      />
+
+      {/* Payment Modal */}
+      <PaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => {
+          setIsPaymentModalOpen(false);
+          setPaymentOrder(null);
+        }}
+        order={paymentOrder}
+        onSuccess={() => {
+          refetch();
+        }}
       />
     </div>
   );

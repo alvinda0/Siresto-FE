@@ -57,6 +57,12 @@ export interface Order {
   tax_amount: number;
   total_amount: number;
   status: string;
+  payment_method?: string;
+  payment_status?: string;
+  paid_amount?: number;
+  change_amount?: number;
+  payment_note?: string;
+  paid_at?: string;
   created_at: string;
   updated_at: string;
   order_items: OrderItemDetail[];

@@ -158,7 +158,7 @@ const OrderDetailModal = ({ isOpen, onClose, orderId }: OrderDetailModalProps) =
                         <p className="text-xs text-gray-500">
                           {order.promo_details.promo_type === 'percentage' 
                             ? `${order.promo_details.promo_value}%` 
-                            : `Rp ${order.promo_details.promo_value.toLocaleString()}`}
+                            : formatCurrency(order.promo_details.promo_value || 0)}
                         </p>
                       </div>
                       <p className="font-medium text-green-600">

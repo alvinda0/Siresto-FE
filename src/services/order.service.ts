@@ -78,6 +78,22 @@ class OrderService {
     );
     return data.data;
   }
+
+  /**
+   * Process order payment
+   */
+  async processPayment(orderId: string, payload: {
+    payment_method: string;
+    paid_amount: number;
+    promo_code?: string;
+    payment_note?: string;
+  }): Promise<Order> {
+    const { data } = await apiClient.post<OrderResponse>(
+      `/api/v1/external/orders/${orderId}/payment`,
+      payload
+    );
+    return data.data;
+  }
 }
 
 export const orderService = new OrderService();
