@@ -67,6 +67,17 @@ class OrderService {
     );
     return data.data;
   }
+
+  /**
+   * Update order status
+   */
+  async updateOrderStatus(orderId: string, status: string): Promise<Order> {
+    const { data } = await apiClient.patch<OrderResponse>(
+      `/api/v1/external/orders/${orderId}/status`,
+      { status }
+    );
+    return data.data;
+  }
 }
 
 export const orderService = new OrderService();

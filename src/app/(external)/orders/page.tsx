@@ -16,12 +16,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ShoppingCart, Plus, RefreshCw, Filter, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Trash2 } from "lucide-react";
+import { ShoppingCart, Plus, RefreshCw, Filter, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Trash2, Edit, Eye } from "lucide-react";
 import LoadingState from "@/components/LoadingState";
 import { ErrorState } from "@/components/ErrorState";
 import { Order, WebSocketOrderMessage } from "@/types/order";
 import OrderDetailModal from "@/components/order/OrderDetailModal";
 import { DeleteOrderModal } from "@/components/order/DeleteOrderModal";
+import { UpdateOrderStatusModal } from "@/components/order/UpdateOrderStatusModal";
+import { OrderItemsModal } from "@/components/order/OrderItemsModal";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -35,6 +37,12 @@ const OrdersListPage = () => {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [deletingOrderId, setDeletingOrderId] = useState<string | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
+  const [updatingOrderStatus, setUpdatingOrderStatus] = useState<string>("");
+  const [isUpdateStatusModalOpen, setIsUpdateStatusModalOpen] = useState(false);
+  const [viewItemsOrderId, setViewItemsOrderId] = useState<string | null>(null);
+  const [viewItemsOrder, setViewItemsOrder] = useState<Order | null>(null);
+  const [isItemsModalOpen, setIsItemsModalOpen] = useState(false);
   
   // WebSocket Filters
   const [wsStatusFilter, setWsStatusFilter] = useState<string>("");
@@ -216,7 +224,7 @@ const OrdersListPage = () => {
     const statusMap: Record<string, { variant: any; label: string }> = {
       PENDING: { variant: "secondary", label: "Pending" },
       CONFIRMED: { variant: "default", label: "Confirmed" },
-      PREPARING: { variant: "default", label: "Preparing" },
+      PROCESSING: { variant: "default", label: "Processing" },
       READY: { variant: "default", label: "Ready" },
       SERVED: { variant: "default", label: "Served" },
       COMPLETED: { variant: "default", label: "Completed" },
@@ -281,7 +289,7 @@ const OrdersListPage = () => {
                     <SelectItem value="ALL">All Status</SelectItem>
                     <SelectItem value="PENDING">Pending</SelectItem>
                     <SelectItem value="CONFIRMED">Confirmed</SelectItem>
-                    <SelectItem value="PREPARING">Preparing</SelectItem>
+                    <SelectItem value="PROCESSING">Processing</SelectItem>
                     <SelectItem value="READY">Ready</SelectItem>
                     <SelectItem value="SERVED">Served</SelectItem>
                     <SelectItem value="COMPLETED">Completed</SelectItem>
@@ -464,16 +472,17 @@ const OrdersListPage = () => {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <div className="text-sm">
-                            {order.order_items.map((item, idx) => (
-                              <div key={idx} className="text-xs">
-                                {item.quantity}x {item.product?.name || item.product_name || "Product"}
-                                {item.note && (
-                                  <span className="text-gray-500 italic"> ({item.note})</span>
-                                )}
-                              </div>
-                            ))}
-                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setViewItemsOrderId(order.id);
+                              setViewItemsOrder(order);
+                              setIsItemsModalOpen(true);
+                            }}
+                          >
+                            View ({order.order_items.length})
+                          </Button>
                         </TableCell>
                         <TableCell className="font-medium">
                           {formatCurrency(order.total_amount)}
@@ -493,16 +502,34 @@ const OrdersListPage = () => {
                                 setSelectedOrderId(order.id);
                                 setIsDetailModalOpen(true);
                               }}
+                              title="Detail Order"
                             >
-                              Detail
+                              <Eye className="h-4 w-4" />
                             </Button>
-                            <Button
-                              variant="default"
-                              size="sm"
-                              onClick={() => router.push(`/orders/${order.id}/quick-add`)}
-                            >
-                              <Plus className="h-4 w-4" />
-                            </Button>
+                            {order.status !== "PROCESSING" && (
+                              <Button
+                                variant="secondary"
+                                size="sm"
+                                onClick={() => {
+                                  setUpdatingOrderId(order.id);
+                                  setUpdatingOrderStatus(order.status);
+                                  setIsUpdateStatusModalOpen(true);
+                                }}
+                                title="Update Status ke Processing"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                            )}
+                            {order.status === "PROCESSING" && (
+                              <Button
+                                variant="default"
+                                size="sm"
+                                onClick={() => router.push(`/orders/${order.id}/quick-add`)}
+                                title="Tambah Pesanan"
+                              >
+                                <Plus className="h-4 w-4" />
+                              </Button>
+                            )}
                             <Button
                               variant="destructive"
                               size="sm"
@@ -510,6 +537,7 @@ const OrdersListPage = () => {
                                 setDeletingOrderId(order.id);
                                 setIsDeleteModalOpen(true);
                               }}
+                              title="Delete Order"
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -619,6 +647,33 @@ const OrdersListPage = () => {
         onSuccess={() => {
           refetch();
         }}
+      />
+
+      {/* Update Order Status Modal */}
+      <UpdateOrderStatusModal
+        isOpen={isUpdateStatusModalOpen}
+        orderId={updatingOrderId}
+        currentStatus={updatingOrderStatus}
+        onClose={() => {
+          setIsUpdateStatusModalOpen(false);
+          setUpdatingOrderId(null);
+          setUpdatingOrderStatus("");
+        }}
+        onSuccess={() => {
+          refetch();
+        }}
+      />
+
+      {/* Order Items Modal */}
+      <OrderItemsModal
+        isOpen={isItemsModalOpen}
+        onClose={() => {
+          setIsItemsModalOpen(false);
+          setViewItemsOrderId(null);
+          setViewItemsOrder(null);
+        }}
+        items={viewItemsOrder?.order_items || []}
+        orderId={viewItemsOrderId || ""}
       />
     </div>
   );
