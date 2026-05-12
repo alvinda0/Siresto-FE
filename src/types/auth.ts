@@ -1,36 +1,13 @@
 // types/auth.ts
 
-// User Type - Updated to match new API response
-export interface Role {
-  id: string
-  name: string
-  display_name: string
-  type: 'INTERNAL' | 'EXTERNAL'
-  description: string
-  is_active: boolean
-  created_at: string
-  updated_at: string
-}
-
-export interface Company {
-  id: string
-  name: string
-  type: string
-  owner_id: string
-  created_at: string
-  updated_at: string
-}
-
+// User Type - Updated to match actual API response from /api/v1/auth/me
 export interface User {
-  id: string
-  name: string
+  user_id: string
+  full_name: string
+  email: string
+  role_name: string
   role_id: string
-  role: Role
-  company_id?: string
-  company?: Company
-  is_active: boolean
-  created_at: string
-  updated_at: string
+  status: boolean
 }
 
 // Login Types
@@ -41,20 +18,18 @@ export interface LoginCredentials {
 
 // API Response Types
 export interface LoginResponse {
+  status: number
   success: boolean
   message: string
-  status: number
-  timestamp: string
   data: {
     token: string
   }
 }
 
 export interface UserResponse {
+  status: number
   success: boolean
   message: string
-  status: number
-  timestamp: string
   data: User
 }
 

@@ -53,14 +53,15 @@ const Header = () => {
     sidebarHeaderForeground,
   } = useTheme();
 
-  const { menuItem, subMenuItem } = getMenuItemByPath(pathname);
+  const userName = user?.full_name || "User";
+  const userRole = user?.role_name || "User";
+  const isInternalUser = user ? ['super_admin', 'admin', 'teacher'].includes(user.role_name.toLowerCase()) : false;
+
+  const { menuItem, subMenuItem } = getMenuItemByPath(pathname, isInternalUser);
   const currentTitle = subMenuItem?.title || menuItem?.title || "Dashboard";
   const currentMenuName = menuItem?.name || "Dashboard";
 
-  const userName = user?.name || "User";
-  const userRole = user?.role?.name || "User";
-
-  const filteredMenuItems = getFilteredMenuItems(userRole);
+  const filteredMenuItems = getFilteredMenuItems(userRole, isInternalUser);
 
   const toggleMobileMenu = (menuName: string) => {
     setMobileOpenMenus((prev) =>
@@ -121,7 +122,7 @@ const Header = () => {
           >
             {currentTitle}
           </h1>
-          <p className="text-[11px] text-gray-400 mt-0.5">Siresto Dashboard</p>
+          <p className="text-[11px] text-gray-400 mt-0.5">Sistem Informasi Akademik</p>
         </div>
 
         <DropdownMenu>
@@ -150,21 +151,21 @@ const Header = () => {
               </div>
 
               <div className="space-y-1 pt-1">
-                <button
+                <Link
+                  href="/profile"
                   className="flex items-center w-full px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-                  onClick={handleProfile}
                 >
                   <User className="w-4 h-4 mr-2.5 text-gray-500" />
                   <span>Profile</span>
-                </button>
+                </Link>
 
-                <button
+                <Link
+                  href="/profile/change-password"
                   className="flex items-center w-full px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-                  onClick={handleChangePassword}
                 >
                   <UserLock className="w-4 h-4 mr-2.5 text-gray-500" />
                   <span>Change Password</span>
-                </button>
+                </Link>
               </div>
 
               <Divider className="my-2" />
@@ -208,13 +209,13 @@ const Header = () => {
                       className="h-10 w-10 rounded-xl flex items-center justify-center shadow-lg"
                       style={{ backgroundColor: 'white', opacity: 0.9 }}
                     >
-                      <span className="font-bold text-lg" style={{ color: sidebarHeaderPrimary }}>S</span>
+                      <span className="font-bold text-lg" style={{ color: sidebarHeaderPrimary }}>SI</span>
                     </div>
                     <h2 
                       className="text-xl font-bold"
                       style={{ color: sidebarHeaderForeground }}
                     >
-                      Siresto
+                      SIAKAD
                     </h2>
                   </div>
                   <button
@@ -387,27 +388,29 @@ const Header = () => {
               </div>
 
               <nav className="space-y-2 mb-6">
-                <button
+                <Link
+                  href="/profile"
                   className="flex items-center w-full px-4 py-3 rounded-xl transition-all bg-gray-50 hover:bg-gray-100"
-                  onClick={handleProfile}
+                  onClick={() => setIsMobileProfileOpen(false)}
                   style={{ color: primaryTextColor }}
                 >
                   <div className="h-10 w-10 rounded-lg bg-blue-50 flex items-center justify-center mr-3">
                     <User className="w-5 h-5 text-blue-600" />
                   </div>
                   <span className="font-semibold">Profile</span>
-                </button>
+                </Link>
 
-                <button
+                <Link
+                  href="/profile/change-password"
                   className="flex items-center w-full px-4 py-3 rounded-xl transition-all bg-gray-50 hover:bg-gray-100"
-                  onClick={handleChangePassword}
+                  onClick={() => setIsMobileProfileOpen(false)}
                   style={{ color: primaryTextColor }}
                 >
                   <div className="h-10 w-10 rounded-lg bg-purple-50 flex items-center justify-center mr-3">
                     <UserLock className="w-5 h-5 text-purple-600" />
                   </div>
                   <span className="font-semibold">Change Password</span>
-                </button>
+                </Link>
               </nav>
 
               <Divider className="mb-6" />

@@ -59,34 +59,43 @@ export const INTERNAL_MENU_ITEMS: MenuItem[] = [
     title: "Dashboard",
     href: "/dashboard",
     icon: LayoutDashboard,
-    roles: ["SUPER_ADMIN", "SUPPORT", "FINANCE"],
-  },
-
-  // === COMPANIES ===
-  {
-    name: "companies",
-    title: "Companies",
-    href: "/companies",
-    icon: Building2,
-    roles: ["SUPER_ADMIN", "SUPPORT"],
+    roles: ["super_admin", "admin"],
   },
 
   // === USERS ===
   {
-    name: "users-internal",
-    title: "Users",
+    name: "users",
+    title: "List User",
     href: "/users",
     icon: Users,
-    roles: ["SUPER_ADMIN", "SUPPORT"],
+    roles: ["super_admin", "admin"],
   },
 
-  // === REPORTS ===
+  // === STUDENTS ===
   {
-    name: "reports-internal",
-    title: "Reports",
-    href: "/reports",
-    icon: FileText,
-    roles: ["SUPER_ADMIN", "FINANCE"],
+    name: "students",
+    title: "List Student",
+    href: "/students",
+    icon: User,
+    roles: ["super_admin", "admin", "teacher"],
+  },
+
+  // === TEACHERS ===
+  {
+    name: "teachers",
+    title: "List Teacher",
+    href: "/teachers",
+    icon: Users,
+    roles: ["super_admin", "admin"],
+  },
+
+  // === SUBJECTS ===
+  {
+    name: "subjects",
+    title: "List Subject",
+    href: "/subjects",
+    icon: BookIcon,
+    roles: ["super_admin", "admin", "teacher"],
   },
 
   // === AUDIT LOG ===
@@ -95,7 +104,7 @@ export const INTERNAL_MENU_ITEMS: MenuItem[] = [
     title: "Audit Log",
     href: "/audit",
     icon: BookDashed,
-    roles: ["SUPER_ADMIN", "SUPPORT", "FINANCE"],
+    roles: ["super_admin", "admin"],
   },
 
   // === SETTINGS ===
@@ -104,7 +113,7 @@ export const INTERNAL_MENU_ITEMS: MenuItem[] = [
     title: "Settings",
     href: "/settings",
     icon: Palette,
-    roles: ["SUPER_ADMIN"],
+    roles: ["super_admin"],
   },
 ];
 
@@ -115,108 +124,25 @@ export const EXTERNAL_MENU_ITEMS: MenuItem[] = [
     title: "Home",
     href: "/home",
     icon: Home,
-    roles: ["OWNER", "ADMIN", "CASHIER", "KITCHEN", "WAITER"],
+    roles: ["student", "candidate"],
   },
 
- 
-
-  // === MY COMPANY ===
+  // === MY PROFILE ===
   {
-    name: "my-company",
-    title: "My Company",
-    href: "/my-company",
-    icon: Building2,
-    roles: ["OWNER", "ADMIN"],
+    name: "my-profile",
+    title: "My Profile",
+    href: "/profile",
+    icon: User,
+    roles: ["student", "candidate"],
   },
 
-  // === BRANCHES ===
+  // === MY SUBJECTS (for students) ===
   {
-    name: "branches",
-    title: "Branches",
-    href: "/branches",
-    icon: Building,
-    roles: ["OWNER", "ADMIN"],
-  },
-
-  // === USERS ===
-  {
-    name: "my-users",
-    title: "Users",
-    href: "/my-users",
-    icon: Users,
-    roles: ["OWNER", "ADMIN"],
-  },
-
-  // === MEJA (TABLES) ===
-  {
-    name: "tables",
-    title: "Meja",
-    href: "/tables",
-    icon: Table2,
-    roles: ["OWNER", "ADMIN", "WAITER"],
-  },
-
-  // === ORDER ===
-  {
-    name: "orders",
-    title: "Daftar Order",
-    href: "/orders",
-    icon: ShoppingCart,
-    roles: ["OWNER", "ADMIN", "CASHIER", "WAITER", "KITCHEN"],
-  },
-
-  // === CREATE ORDER ===
-  {
-    name: "create-order",
-    title: "Buat Order",
-    href: "/orders/create",
-    icon: PlusCircle,
-    roles: ["OWNER", "ADMIN", "CASHIER", "WAITER"],
-  },
-
-  // === PRODUK (PRODUCTS) ===
-  {
-    name: "products",
-    title: "Produk",
-    href: "/products",
-    icon: Package,
-    roles: ["OWNER", "ADMIN", "CASHIER", "KITCHEN", "WAITER"],
-  },
-
-  // === KATEGORI (CATEGORIES) ===
-  {
-    name: "categories",
-    title: "Kategori",
-    href: "/categories",
-    icon: FolderTree,
-    roles: ["OWNER", "ADMIN", "CASHIER", "KITCHEN", "WAITER"],
-  },
-
-  // === PAJAK (TAXES) ===
-  {
-    name: "taxes",
-    title: "Pajak",
-    href: "/taxes",
-    icon: HandCoins,
-    roles: ["OWNER", "ADMIN"],
-  },
-
-  // === PROMO ===
-  {
-    name: "promos",
-    title: "Promo",
-    href: "/promos",
-    icon: DollarSign,
-    roles: ["OWNER", "ADMIN"],
-  },
-
-  // === TRANSACTIONS ===
-  {
-    name: "transactions",
-    title: "Laporan Transaksi",
-    href: "/transactions",
-    icon: FileText,
-    roles: ["OWNER", "ADMIN"],
+    name: "my-subjects",
+    title: "My Subjects",
+    href: "/my-subjects",
+    icon: BookIcon,
+    roles: ["student"],
   },
 
   // === ACTIVITY LOGS ===
@@ -225,7 +151,7 @@ export const EXTERNAL_MENU_ITEMS: MenuItem[] = [
     title: "Activity Logs",
     href: "/logs",
     icon: BookDashed,
-    roles: ["OWNER", "ADMIN"],
+    roles: ["student", "candidate"],
   },
 ];
 

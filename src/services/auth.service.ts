@@ -94,18 +94,20 @@ class AuthService {
   }
 
   isInternalUser(user: User): boolean {
-    return user.role.type === 'INTERNAL'
+    // Check if role_name indicates internal user (super_admin, admin, teacher)
+    const internalRoles = ['super_admin', 'admin', 'teacher']
+    return internalRoles.includes(user.role_name.toLowerCase())
   }
 
   isExternalUser(user: User): boolean {
-    return user.role.type === 'EXTERNAL'
+    return !this.isInternalUser(user)
   }
 
   getDashboardRoute(user: User): string {
     if (this.isInternalUser(user)) {
-      return '/internal'
+      return '/dashboard'
     }
-    return '/dashboard'
+    return '/home'
   }
 
   async forgotPassword(payload: ForgotPasswordPayload): Promise<string> {

@@ -44,9 +44,12 @@ const InternalLayout = ({ children }: InternalLayoutProps) => {
       router.replace("/auth/login");
     }
 
-    // Check if user is internal
-    if (!isLoading && user && user.role.type !== "INTERNAL") {
-      router.replace("/dashboard");
+    // Check if user is internal (super_admin, admin, teacher)
+    if (!isLoading && user) {
+      const internalRoles = ['super_admin', 'admin', 'teacher']
+      if (!internalRoles.includes(user.role_name.toLowerCase())) {
+        router.replace("/dashboard");
+      }
     }
   }, [isLoading, isError, user, router, queryClient]);
 

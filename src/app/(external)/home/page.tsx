@@ -23,7 +23,7 @@ const HomePage = () => {
   const { data: homeData, isLoading: isHomeLoading, error } = useQuery({
     queryKey: ['home-data'],
     queryFn: () => homeService.getHomeData(),
-    enabled: !!user && user.role.type === 'EXTERNAL',
+    enabled: !!user,
   })
 
   useEffect(() => {
@@ -34,8 +34,9 @@ const HomePage = () => {
       return
     }
 
-    // Check if user is internal
-    if (user.role.type !== 'EXTERNAL') {
+    // Check if user is internal (super_admin, admin, teacher)
+    const internalRoles = ['super_admin', 'admin', 'teacher']
+    if (internalRoles.includes(user.role_name.toLowerCase())) {
       router.push('/dashboard')
     }
   }, [user, isUserLoading, router])
@@ -111,10 +112,10 @@ const HomePage = () => {
         
         <div className="relative z-10">
           <h1 className="text-3xl font-bold mb-2">
-            Selamat Datang, {user.name}!
+            Selamat Datang, {user.full_name}!
           </h1>
           <p className="opacity-80">
-            {user.company?.name} - {user.role.display_name}
+            {user.role_name}
           </p>
         </div>
       </div>

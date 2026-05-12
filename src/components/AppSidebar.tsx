@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   Sidebar,
   SidebarContent,
@@ -38,8 +39,8 @@ const AppSidebar = ({ activeItem = "Dashboard" }: AppSidebarProps) => {
     sidebarHeaderForeground,
   } = useTheme();
 
-  const userRole = user?.role?.name || "";
-  const isInternalUser = user?.role?.type === "INTERNAL";
+  const userRole = user?.role_name || "";
+  const isInternalUser = user ? ['super_admin', 'admin', 'teacher'].includes(user.role_name.toLowerCase()) : false;
   
   // Use INTERNAL_MENU_ITEMS for internal users, MENU_ITEMS for external users
   const filteredMenuItems = isInternalUser 
@@ -137,13 +138,13 @@ const AppSidebar = ({ activeItem = "Dashboard" }: AppSidebarProps) => {
             className="h-9 w-9 rounded-lg flex items-center justify-center flex-shrink-0"
             style={{ backgroundColor: sidebarHeaderForeground }}
           >
-            <span className="font-bold text-base" style={{ color: sidebarHeaderPrimary }}>S</span>
+            <span className="font-bold text-base" style={{ color: sidebarHeaderPrimary }}>SI</span>
           </div>
           <h2 
             className="text-lg font-bold"
             style={{ color: sidebarHeaderForeground }}
           >
-            Siresto
+            SIAKAD
           </h2>
           <div className="ml-auto">
             <SidebarTrigger />
@@ -156,7 +157,7 @@ const AppSidebar = ({ activeItem = "Dashboard" }: AppSidebarProps) => {
             className="h-8 w-8 rounded-lg flex items-center justify-center"
             style={{ backgroundColor: sidebarHeaderForeground }}
           >
-            <span className="font-bold text-sm" style={{ color: sidebarHeaderPrimary }}>S</span>
+            <span className="font-bold text-sm" style={{ color: sidebarHeaderPrimary }}>SI</span>
           </div>
           <SidebarTrigger className="h-6 w-6" />
         </div>
@@ -213,7 +214,7 @@ const AppSidebar = ({ activeItem = "Dashboard" }: AppSidebarProps) => {
                                 onMouseLeave={() => setHoveredMenu(null)}
                                 style={getSubmenuStyle(isSubActive, subMenuKey)}
                               >
-                                <a
+                                <Link
                                   href={subItem.href}
                                   className="flex items-center gap-3 w-full"
                                 >
@@ -222,7 +223,7 @@ const AppSidebar = ({ activeItem = "Dashboard" }: AppSidebarProps) => {
                                     style={{ color: getIconColor(isSubActive, subMenuKey) }}
                                   />
                                   <span>{subItem.title}</span>
-                                </a>
+                                </Link>
                               </SidebarMenuSubButton>
                             </SidebarMenuSubItem>
                           );
@@ -239,13 +240,13 @@ const AppSidebar = ({ activeItem = "Dashboard" }: AppSidebarProps) => {
                     style={getMenuStyle(isActive, menuKey)}
                     tooltip={state === "collapsed" ? item.title : undefined}
                   >
-                    <a href={item.href} className="flex items-center gap-3 w-full">
+                    <Link href={item.href} className="flex items-center gap-3 w-full">
                       <item.icon 
                         className="h-5 w-5 flex-shrink-0"
                         style={{ color: getIconColor(isActive, menuKey) }}
                       />
                       <span className="text-sm font-medium">{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 )}
               </SidebarMenuItem>

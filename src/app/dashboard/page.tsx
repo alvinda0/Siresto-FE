@@ -24,10 +24,10 @@ const InternalDashboardPage = () => {
       {/* Welcome Section */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
         <h1 className="text-3xl font-bold mb-2">
-          Selamat Datang, {user.name}!
+          Selamat Datang, {user.full_name}!
         </h1>
         <p className="text-blue-100">
-          Dashboard Internal - {user.role?.display_name || user.role?.name || 'Admin'}
+          Dashboard Internal - {user.role_name}
         </p>
       </div>
 
